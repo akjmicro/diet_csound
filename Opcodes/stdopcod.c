@@ -47,6 +47,7 @@ int32_t stdopc_ModuleInit(CSOUND *csound)
     p->file_opened = (struct fileinTag*) NULL;
     p->file_num = -1;
     /*p->buf = (MYFLT*) NULL;*/
+    /*
     err |= bbcut_init_(csound);
     err |= biquad_init_(csound);
     err |= butter_init_(csound);
@@ -68,7 +69,9 @@ int32_t stdopc_ModuleInit(CSOUND *csound)
     err |= newfils_init_(csound);
     err |= nlfilt_init_(csound);
     err |= oscbnk_init_(csound);
+    */
     err |= reverbsc_init_(csound);
+    /*
     err |= seqtime_init_(csound);
     err |= sndloop_init_(csound);
     err |= sndwarp_init_(csound);
@@ -76,6 +79,7 @@ int32_t stdopc_ModuleInit(CSOUND *csound)
     err |= ugens9_init_(csound);
     err |= ugensa_init_(csound);
     err |= ugsc_init_(csound);
+    */
     return (err ? CSOUND_ERROR : CSOUND_SUCCESS);
 }
 

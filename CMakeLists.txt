@@ -770,6 +770,7 @@ set(libcsound_SRCS
     Opcodes/emugens/emugens.c
     Opcodes/emugens/scugens.c
     Opcodes/reverbsc.c
+    Opcodes/streson.c
     Opcodes/oscbnk.c
     Opcodes/seqtime.c
     Opcodes/metro.c

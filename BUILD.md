@@ -4,15 +4,13 @@ Csound Build Instructions
 Build instructions for building Csound from the source packages for the
 following operating systems
 
--   [Debian/Ubuntu Linux](#debian)
-
--   [Mac OS X using Homebrew](#OSXHomebrew)
-
 -   [General Instructions for Linux without Root access](#generalLinux)
 
 -   [Raspberry PI standard OS](#raspian)
 
 -   [Fedora 18](#fedora)
+
+-   [Mac OS X using Homebrew](#OSXHomebrew)
 
 -   [Windows 32/64 bit using MYSYS (recommended)](#msys2)
 
@@ -20,170 +18,8 @@ following operating systems
 
 -   [Windows Visual Studio](#msvs)
 
--   [Android](#android)  
-
 Instructions for RPI compiled by Dominic Melville contact via dcamelville at gmail.com
 for amendments and updates
-
-
-
-Debian/Ubuntu <a name="debian">
---------------
-
-The following instructions will explain how to configure, compile, and install
-Csound 6 on Debian and Ubuntu systems.
-
-### Requirements 
-
-You will need root access, primarily to allow installation of dependencies
-required for building Csound, as well as for installing into /usr/local.
-
-### Building Csound 6 
-
-The following instructions are written for those getting a copy of the source code from Git.
-You will need to adjust the steps accordingly when using the source tarball from
-the files section.
-
-The first thing to do is make sure you have all of the required dependencies for
-building Csound. In a terminal, do the following:
-
-1.  Edit, as root, `/etc/apt/sources.list` and ensure that each line beginning with `deb` has another line below it that is identical except that `deb` is replaced with `deb-src`. Then run `sudo apt-get update`.
-
-1.  `sudo apt-get build-dep csound` 
-
-2.  `sudo apt-get install cmake`
-
-3.  `sudo apt-get install git `
-
-The following numbered steps are to be done in a terminal for building and
-installing Csound:
-
-1.  `cd ~ `
-
-2.  `mkdir csound`
-
-3.  `cd csound`
-
-4.  `git clone https://github.com/csound/csound.git csound`  
-    (Add `git checkout master` for building the latest stable version.) 
-
-5.  `mkdir cs6make `
-
-6.  `cd cs6make `
-
-7.  `cmake ../csound`
-
-8.  `make -j6 `
-
-9.  `sudo make install `
-
-10. `sudo ldconfig `
-
-At this point, Csound 6 should now be compiled and installed into the /usr/local
-set of folders.
-
-
-
-macOS using Homebrew <a name="OSXHomebrew">
------------------------
-
-### Introduction 
-
-Homebrew is a package manager for macOS. It is able to download, build, and
-install applications, including their dependencies. The following sections will
-describe what you will need to do to use Homebrew to install Csound 6.
-
-### Requirements 
-
--   Xcode
-
--   Xcode Command-Line Tools
-
--   Homebrew - [https://brew.sh][2]
-
-[2]: <https://brew.sh>
-
-#### Installing Homebrew 
-
-You will first need to have a working Homebrew setup. This
-requires installing Xcode and the Xcode Command-Line tools. More information on
-installing Homebrew is available on the Homebrew website as well as their wiki.
-
-In particular, you will need to be mindful to enable user read/write for three
-directories: "/usr/local", "/Library/Python/2.7/site-packages", and
-"/Library/Java/Extensions". These need to be writable by the user as Csound will
-need to install packages into each of those folders. Running the following
-commands at a Terminal prompt should allow you to do this:
-
-`sudo chmod +a 'user:YOUR_NAME_HERE allow
-add_subdirectory,add_file,delete_child,directory_inherit'
-/Library/Python/2.7/site-packages `
-
-`sudo chmod +a 'user:YOUR_NAME_HERE allow
-add_subdirectory,add_file,delete_child,directory_inherit'
-/Library/Java/Extensions `
-
-where YOUR_NAME_HERE refers to your system username.
-
-### Installing Csound 
-
-Once Homebrew is setup, run the following command at the commandline to install Csound:
-
-`brew install csound`
-
-You can install the latest from the develop branch using:
-  
-`brew install --HEAD csound`
-
-If you have a HEAD version already installed and you want to rebuild with newly updated code in the develop branch, use: 
-  
-`brew reinstall csound`
-
-### Building Csound using Homebrew-supplied dependencies
-
-If you would like to compile csound on macOS, you need to have its dependencies installed. 
-You can do this manually picking out various packages from Homebrew or you can use the csound 
-formula to install the dependencies using
-
-`brew install --only-dependencies csound`
-
-This installs all of the tools and libraries that is required to build csound and various plugins. After installing dependencies, you can use cmake to build:
-
-1. Clone the csound source from github and `cd` into the root of the csound folder.
-2. `mkdir build` 
-3. `cd build` 
-4. `cmake ..`
-5. `make -j6`
-6. `make install`
-
-For step 4, you can use `cmake .. -G Xcode` if you then want to build Csound with XCode.  Step 6 may require the use of `sudo` depending on permissions. Note that building from source installs into different paths on the system compared to where the Homebrew-built version of Csound is installed to. It is recommended to `brew uninstall csound` prior to building, installing, and using your self-compiled version of Csound. 
-
-
-<!--### Known Issues -->
-
-<!--There is currently a warning issued when Csound installs:-->
-
-<!--`Warning: Could not fix CsoundLib64.framework/Versions/6.0/CsoundLib64 in-->
-<!--/usr/local/Cellar/csound/HEAD/bin/srconv `-->
-
-<!--`Warning: Could not fix CsoundLib64.framework/Versions/6.0/CsoundLib64 in-->
-<!--/usr/local/Cellar/csound/HEAD/bin/sndinfo `-->
-
-<!--`Warning: Could not fix CsoundLib64.framework/Versions/6.0/CsoundLib64 in-->
-<!--/usr/local/Cellar/csound/HEAD/bin/scsort `-->
-
-<!--`Warning: Could not fix CsoundLib64.framework/Versions/6.0/CsoundLib64 in-->
-<!--/usr/local/Cellar/csound/HEAD/bin/scope `-->
-
-<!--....-->
-
-<!--This is due to how the CsoundLib64.framework is installed into-->
-<!--~/Library/Frameworks and bypasses Homebrew's installation path for Frameworks.-->
-<!--This is a known issue and will be looked into.-->
-
-
-
-
 
 General Linux without Root access <a name="generalLinux">
 ---------------------------------
@@ -243,7 +79,7 @@ released sources, you do not need to change branches.
 
 -   `cd ..`
 
--   `git clone https://github.com/csound/csound.git csound `
+-   `git clone https://github.com/akjmicro/diet_csound.git csound `
 
 -   `cd csound`
 
@@ -359,7 +195,7 @@ Following this, you can build as in other linux systems,
 
 2.  `cd csound`
 
-3.  `git clone https://github.com/csound/csound.git csound`
+3.  `git clone https://github.com/akjmicro/diet_csound.git csound`
 
 4.  `mkdir cs6make`
 
@@ -567,6 +403,105 @@ and log out of root
 Testing As a basic test, just try typing csound at a command prompt, and you
 should get the help message.
 
+
+macOS using Homebrew <a name="OSXHomebrew">
+-----------------------
+
+### Introduction 
+
+Homebrew is a package manager for macOS. It is able to download, build, and
+install applications, including their dependencies. The following sections will
+describe what you will need to do to use Homebrew to install Csound 6.
+
+### Requirements 
+
+-   Xcode
+
+-   Xcode Command-Line Tools
+
+-   Homebrew - [https://brew.sh][2]
+
+[2]: <https://brew.sh>
+
+#### Installing Homebrew 
+
+You will first need to have a working Homebrew setup. This
+requires installing Xcode and the Xcode Command-Line tools. More information on
+installing Homebrew is available on the Homebrew website as well as their wiki.
+
+In particular, you will need to be mindful to enable user read/write for three
+directories: "/usr/local", "/Library/Python/2.7/site-packages", and
+"/Library/Java/Extensions". These need to be writable by the user as Csound will
+need to install packages into each of those folders. Running the following
+commands at a Terminal prompt should allow you to do this:
+
+`sudo chmod +a 'user:YOUR_NAME_HERE allow
+add_subdirectory,add_file,delete_child,directory_inherit'
+/Library/Python/2.7/site-packages `
+
+`sudo chmod +a 'user:YOUR_NAME_HERE allow
+add_subdirectory,add_file,delete_child,directory_inherit'
+/Library/Java/Extensions `
+
+where YOUR_NAME_HERE refers to your system username.
+
+### Installing Csound 
+
+Once Homebrew is setup, run the following command at the commandline to install Csound:
+
+`brew install csound`
+
+You can install the latest from the develop branch using:
+  
+`brew install --HEAD csound`
+
+If you have a HEAD version already installed and you want to rebuild with newly updated code in the develop branch, use: 
+  
+`brew reinstall csound`
+
+### Building Csound using Homebrew-supplied dependencies
+
+If you would like to compile csound on macOS, you need to have its dependencies installed. 
+You can do this manually picking out various packages from Homebrew or you can use the csound 
+formula to install the dependencies using
+
+`brew install --only-dependencies csound`
+
+This installs all of the tools and libraries that is required to build csound and various plugins. After installing dependencies, you can use cmake to build:
+
+1. Clone the csound source from github and `cd` into the root of the csound folder.
+2. `mkdir build` 
+3. `cd build` 
+4. `cmake ..`
+5. `make -j6`
+6. `make install`
+
+For step 4, you can use `cmake .. -G Xcode` if you then want to build Csound with XCode.  Step 6 may require the use of `sudo` depending on permissions. Note that building from source installs into different paths on the system compared to where the Homebrew-built version of Csound is installed to. It is recommended to `brew uninstall csound` prior to building, installing, and using your self-compiled version of Csound. 
+
+
+<!--### Known Issues -->
+
+<!--There is currently a warning issued when Csound installs:-->
+
+<!--`Warning: Could not fix CsoundLib64.framework/Versions/6.0/CsoundLib64 in-->
+<!--/usr/local/Cellar/csound/HEAD/bin/srconv `-->
+
+<!--`Warning: Could not fix CsoundLib64.framework/Versions/6.0/CsoundLib64 in-->
+<!--/usr/local/Cellar/csound/HEAD/bin/sndinfo `-->
+
+<!--`Warning: Could not fix CsoundLib64.framework/Versions/6.0/CsoundLib64 in-->
+<!--/usr/local/Cellar/csound/HEAD/bin/scsort `-->
+
+<!--`Warning: Could not fix CsoundLib64.framework/Versions/6.0/CsoundLib64 in-->
+<!--/usr/local/Cellar/csound/HEAD/bin/scope `-->
+
+<!--....-->
+
+<!--This is due to how the CsoundLib64.framework is installed into-->
+<!--~/Library/Frameworks and bypasses Homebrew's installation path for Frameworks.-->
+<!--This is a known issue and will be looked into.-->
+
+
 Windows 32/64 Bit (msys2) <a name="msys2">
 ---------------
 Csound for Windows can now be built using MSYS2. This is the recommeneded way to build Csound for Windows. Please follow the instruction posted [here](https://github.com/csound/csound/tree/develop/mingw64).
@@ -683,5 +618,3 @@ to point to it
   $ sh build.sh
 
 The Java files and NDK libraries will be under CsoundAndroid.
-
-

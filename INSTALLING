@@ -1,12 +1,7 @@
-INSTALLING CSOUND 6
+INSTALLING DIET CSOUND 7
 
-To install prebuilt binaries for Linux on Intel, Windows, and OS X,
-obtain the appropriate archive or installer
-from https://github.com/csound/csound/releases
+Sources available https://github.com/akjmicro/diet_csound
 
 To build from sources using the Csound GIT repository
 at Github or using a source archive, follow the instructions in
 the BUILD.md file.
-
-
-

@@ -116,4 +116,3 @@ static OENTRY urandom_localops[] = {
 };
 
 LINKAGE_BUILTIN(urandom_localops)
-

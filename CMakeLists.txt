@@ -770,9 +770,10 @@ set(libcsound_SRCS
     Opcodes/emugens/scugens.c
     Opcodes/reverbsc.c
     Opcodes/oscbnk.c
-    Opcodes/ugsc.c
     Opcodes/seqtime.c
     Opcodes/metro.c
+    Opcodes/ugsc.c
+    Opcodes/uggab.c
     Top/argdecode.c
     Top/csdebug.c
     Top/cscore_internal.c

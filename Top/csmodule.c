@@ -1147,7 +1147,9 @@ void print_opcodedir_warning(CSOUND *p)
 
 typedef int32_t (*INITFN)(CSOUND *, void *);
 
+extern int32_t afilts_localops_init(CSOUND *, void *);
 extern int32_t biquad_localops_init(CSOUND *, void *);
+extern int32_t butter_localops_init(CSOUND *, void *);
 extern int32_t compress_localops_init(CSOUND *, void *);
 extern int32_t eqfil_localops_init(CSOUND *, void *);
 extern int32_t ftgen_localops_init(CSOUND *, void *);
@@ -1157,6 +1159,8 @@ extern int32_t scugens_localops_init(CSOUND *, void *);
 extern int32_t emugens_localops_init(CSOUND *, void *);
 extern int32_t reverbsc_localops_init(CSOUND *, void *);
 extern int32_t oscbnk_localops_init(CSOUND *, void *);
+extern int32_t ugsc_localops_init(CSOUND *, void *);
+extern int32_t seqtime_localops_init(CSOUND *, void *);
 
 const INITFN staticmodules[] = {
     biquad_localops_init,

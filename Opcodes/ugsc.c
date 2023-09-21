@@ -721,24 +721,17 @@ static int32_t lp2ak(CSOUND *csound, LP2 *p)
 
 #define S(x)    sizeof(x)
 
-static OENTRY localops[] =
-  {
-   { "svfilter", S(SVF),    0, 3, "aaa", "axxoo", (SUBR)svfset, (SUBR)svf    },
-   { "hilbert", S(HILBERT), 0,3, "aa", "a", (SUBR)hilbertset, (SUBR)hilbert },
-   { "resonr", S(RESONZ),   0,3, "a", "axxoo", (SUBR)resonzset, (SUBR)resonr},
-   { "resonz", S(RESONZ),   0,3, "a", "axxoo", (SUBR)resonzset, (SUBR)resonz},
-   { "lowpass2.kk", S(LP2), 0,3, "a", "akko",  (SUBR)lp2_set, (SUBR)lp2     },
-   { "lowpass2.aa", S(LP2), 0,3, "a", "aaao",  (SUBR)lp2_set, (SUBR)lp2aa   },
-   { "lowpass2.ak", S(LP2), 0,3, "a", "aakao", (SUBR)lp2_set, (SUBR)lp2ak   },
-   { "lowpass2.ka", S(LP2), 0,3, "a", "akao",  (SUBR)lp2_set, (SUBR)lp2ka   },
-   { "phaser2", S(PHASER2), 0,3, "a", "akkkkkk",(SUBR)phaser2set,(SUBR)phaser2},
-   { "phaser1", S(PHASER1), 0,3, "a", "akkko", (SUBR)phaser1set,(SUBR)phaser1}
+static OENTRY ugsc_localops[] = {
+    { "svfilter", S(SVF),    0,3, "aaa", "axxoo",   (SUBR)svfset,     (SUBR)svf     },
+    { "hilbert", S(HILBERT), 0,3, "aa",  "a",       (SUBR)hilbertset, (SUBR)hilbert },
+    { "resonr", S(RESONZ),   0,3, "a",   "axxoo",   (SUBR)resonzset,  (SUBR)resonr  },
+    { "resonz", S(RESONZ),   0,3, "a",   "axxoo",   (SUBR)resonzset,  (SUBR)resonz  },
+    { "lowpass2.kk", S(LP2), 0,3, "a",   "akko",    (SUBR)lp2_set,    (SUBR)lp2     },
+    { "lowpass2.aa", S(LP2), 0,3, "a",   "aaao",    (SUBR)lp2_set,    (SUBR)lp2aa   },
+    { "lowpass2.ak", S(LP2), 0,3, "a",   "aakao",   (SUBR)lp2_set,    (SUBR)lp2ak   },
+    { "lowpass2.ka", S(LP2), 0,3, "a",   "akao",    (SUBR)lp2_set,    (SUBR)lp2ka   },
+    { "phaser2", S(PHASER2), 0,3, "a",   "akkkkkk", (SUBR)phaser2set, (SUBR)phaser2 },
+    { "phaser1", S(PHASER1), 0,3, "a",   "akkko",   (SUBR)phaser1set, (SUBR)phaser1 }
 };
 
-int32_t ugsc_init_(CSOUND *csound)
-{
-    return csound->AppendOpcodes(csound, &(localops[0]),
-                                 (int32_t
-                                  ) (sizeof(localops) / sizeof(OENTRY)));
-}
-
+LINKAGE_BUILTIN(ugsc_localops)

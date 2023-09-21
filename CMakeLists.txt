@@ -757,7 +757,9 @@ set(libcsound_SRCS
     OOps/ugrw1.c
     OOps/vdelay.c
     OOps/compile_ops.c
+    Opcodes/afilters.c
     Opcodes/biquad.c
+    Opcodes/butter.c
     Opcodes/compress.c
     Opcodes/eqfil.c
     Opcodes/ftgen.c
@@ -767,6 +769,8 @@ set(libcsound_SRCS
     Opcodes/emugens/scugens.c
     Opcodes/reverbsc.c
     Opcodes/oscbnk.c
+    Opcodes/ugsc.c
+    Opcodes/seqtime.c
     Top/argdecode.c
     Top/csdebug.c
     Top/cscore_internal.c

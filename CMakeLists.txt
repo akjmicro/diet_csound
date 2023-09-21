@@ -757,6 +757,7 @@ set(libcsound_SRCS
     OOps/ugrw1.c
     OOps/vdelay.c
     OOps/compile_ops.c
+    Opcodes/active.c
     Opcodes/afilters.c
     Opcodes/biquad.c
     Opcodes/butter.c

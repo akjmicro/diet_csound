@@ -757,13 +757,16 @@ set(libcsound_SRCS
     OOps/ugrw1.c
     OOps/vdelay.c
     OOps/compile_ops.c
+    Opcodes/biquad.c
     Opcodes/compress.c
     Opcodes/eqfil.c
-    Opcodes/oscbnk.c
-    Opcodes/reverbsc.c
+    Opcodes/ftgen.c
+    Opcodes/midiops2.c
     Opcodes/pinker.c
     Opcodes/emugens/emugens.c
     Opcodes/emugens/scugens.c
+    Opcodes/reverbsc.c
+    Opcodes/oscbnk.c
     Top/argdecode.c
     Top/csdebug.c
     Top/cscore_internal.c
@@ -788,48 +791,6 @@ if(NOT MSVC)
 set_source_files_properties(Opcodes/sfont.c PROPERTIES
   COMPILE_FLAGS -Wno-address-of-packed-member)
 endif()
-
-# set(stdopcod_SRCS
-#     Opcodes/bbcut.c
-#     Opcodes/biquad.c
-#     Opcodes/butter.c
-#     Opcodes/clfilt.c
-#     Opcodes/cross2.c
-#     Opcodes/dam.c
-#     Opcodes/dcblockr.c
-#     Opcodes/filter.c
-#     Opcodes/flanger.c
-#     Opcodes/follow.c
-#     Opcodes/fout.c
-#     Opcodes/ftconv.c
-#     Opcodes/ftgen.c
-#     Opcodes/locsig.c
-#     Opcodes/lowpassr.c
-#     Opcodes/metro.c
-#     Opcodes/midiops2.c
-#     Opcodes/midiops3.c
-#     Opcodes/newfils.c
-#     Opcodes/nlfilt.c
-#     Opcodes/seqtime.c
-#     Opcodes/sndloop.c
-#     Opcodes/sndwarp.c
-#     Opcodes/ugens7.c
-#     Opcodes/ugens9.c
-#     Opcodes/ugensa.c
-#     Opcodes/ugsc.c
-#     Opcodes/stdopcod.c
-#     Opcodes/socksend.c
-#     Opcodes/sockrecv.c)
-
-# set(mp3in_SRCS
-#     Opcodes/mp3in.c
-#     InOut/libmpadec/layer1.c
-#     InOut/libmpadec/layer2.c
-#     InOut/libmpadec/layer3.c
-#     InOut/libmpadec/synth.c
-#     InOut/libmpadec/tables.c
-#     InOut/libmpadec/mpadec.c
-#     InOut/libmpadec/mp3dec.c)
 
 
 if(BUILD_PERFTHREAD_CLASS)

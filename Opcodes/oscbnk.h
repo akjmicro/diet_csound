@@ -24,6 +24,7 @@
 #ifndef CSOUND_OSCBNK_H
 #define CSOUND_OSCBNK_H
 
+#include "csoundCore.h"
 #include "stdopcod.h"
 
 /*

@@ -34,7 +34,7 @@
     02110-1301 USA
 */
 
-#include "stdopcod.h"
+#include "csoundCore.h"
 #include <math.h>
 
 #define DEFAULT_SRATE   44100.0
@@ -307,14 +307,9 @@ static int32_t sc_reverb_perf(CSOUND *csound, SC_REVERB *p)
                              Str("reverbsc: not initialised"));
 }
 
-/* module interface functions */
-
-int32_t reverbsc_init_(CSOUND *csound)
+static OENTRY reverbsc_localops[] =
 {
-    return csound->AppendOpcode(csound, "reverbsc",
-                                (int32_t) sizeof(SC_REVERB), 0, 3, "aa", "aakkjpo",
-                                (int32_t (*)(CSOUND *, void *)) sc_reverb_init,
-                                (int32_t (*)(CSOUND *, void *)) sc_reverb_perf,
-                                NULL);
-}
+ { "reverbsc", sizeof(SC_REVERB) , 0, 3, "aa", "aakkjpo", (SUBR) sc_reverb_init, (SUBR) sc_reverb_perf, NULL }
+};
 
+LINKAGE_BUILTIN(reverbsc_localops)

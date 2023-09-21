@@ -774,11 +774,9 @@ static int32_t getftargs(CSOUND *csound, FTARGS *p)
 }
 
 
-
-
 #define S(x)    sizeof(x)
 
-static OENTRY localops[] = {
+static OENTRY ftgen_localops[] = {
   { "ftgen",    S(FTGEN),     TW, 1,  "i",  "iiiiim", (SUBR) ftgen, NULL, NULL    },
   { "ftgen.S",    S(FTGEN),   TW, 1,  "i",  "iiiSim", (SUBR) ftgen_S, NULL, NULL  },
   { "ftgen.iS",    S(FTGEN),  TW, 1,  "i",  "iiiiSm", (SUBR) ftgen_iS, NULL, NULL },
@@ -807,9 +805,4 @@ static OENTRY localops[] = {
 
 };
 
-int32_t ftgen_init_(CSOUND *csound)
-{
-    return csound->AppendOpcodes(csound, &(localops[0]),
-                                 (int32_t
-                                  ) (sizeof(localops) / sizeof(OENTRY)));
-}
+LINKAGE_BUILTIN(ftgen_localops)

@@ -24,10 +24,15 @@
     02110-1301 USA
 */
 
-                        /*                                      ACTIVE.H */
+typedef struct {
+        OPDS    h;
+        MYFLT   *cnt;
+        MYFLT   *ins;
+        MYFLT   *opt;
+        MYFLT   *norel;
+} INSTCNT;
 
 int32_t instcount(CSOUND *, INSTCNT *p);
 int32_t instcount_S(CSOUND *, INSTCNT *p);
 
 #endif /* ACTIVE_H */
-

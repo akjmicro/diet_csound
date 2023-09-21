@@ -1545,8 +1545,8 @@ static int32_t fprintf_i_S(CSOUND *csound, FPRINTF *p)
 }
 
 #define S(x)    sizeof(x)
-static OENTRY localops[] = {
 
+static OENTRY fout_localops[] = {
     {"fprints",    S(FPRINTF),      0, 1,  "",     "SSN",
         (SUBR) fprintf_i_S, (SUBR) NULL,(SUBR) NULL, NULL, },
     {"fprints.i",    S(FPRINTF),      0, 1,  "",     "iSN",
@@ -1597,8 +1597,4 @@ static OENTRY localops[] = {
         (SUBR) i_infile,        (SUBR) NULL,        (SUBR) NULL, NULL}
 };
 
-int32_t fout_init_(CSOUND *csound)
-{
-    return csound->AppendOpcodes(csound, &(localops[0]),
-                                 (int32_t) (sizeof(localops) / sizeof(OENTRY)));
-}
+LINKAGE_BUILTIN(fout_localops)

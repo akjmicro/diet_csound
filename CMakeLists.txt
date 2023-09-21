@@ -763,6 +763,7 @@ set(libcsound_SRCS
     Opcodes/butter.c
     Opcodes/compress.c
     Opcodes/eqfil.c
+    Opcodes/fout.c
     Opcodes/ftgen.c
     Opcodes/midiops2.c
     Opcodes/pinker.c

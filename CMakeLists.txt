@@ -178,7 +178,7 @@ endif()
 option(USE_DOUBLE "Set to use double-precision floating point for audio samples." ON)
 option(USE_LIBSNDFILE "Use libsndfile for sndfile IO, if available" ON)
 option(BUILD_PERFTHREAD_CLASS "Include the Csound performance thread support (C++) " ON)
-option(BUILD_UTILITIES "Build stand-alone executables for utilities that can also be used with -U" ON)
+option(BUILD_UTILITIES "Build stand-alone executables for utilities that can also be used with -U" OFF)
 option(NEW_PARSER_DEBUG "Enable tracing of new parser" OFF)
 option(BUILD_MULTI_CORE "Enable building for multicore system" ON)
 option(FAIL_MISSING "Fail when a required external dependency is not present (useful for packagers)" OFF)
@@ -1270,8 +1270,6 @@ endif()
 
 add_subdirectory(Opcodes)
 add_subdirectory(InOut)
-add_subdirectory(util)
-add_subdirectory(util1)
 add_subdirectory(po)
 
 # uninstall target

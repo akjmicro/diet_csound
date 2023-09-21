@@ -772,6 +772,7 @@ set(libcsound_SRCS
     Opcodes/oscbnk.c
     Opcodes/ugsc.c
     Opcodes/seqtime.c
+    Opcodes/metro.c
     Top/argdecode.c
     Top/csdebug.c
     Top/cscore_internal.c

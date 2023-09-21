@@ -759,83 +759,11 @@ set(libcsound_SRCS
     OOps/ugrw1.c
     OOps/vdelay.c
     OOps/compile_ops.c
-    Opcodes/babo.c
-    Opcodes/bilbar.c
     Opcodes/compress.c
     Opcodes/eqfil.c
-    Opcodes/Vosim.c
-    Opcodes/squinewave.c
+    Opcodes/oscbnk.c
+    Opcodes/reverbsc.c
     Opcodes/pinker.c
-    Opcodes/pitch.c
-    Opcodes/pitch0.c
-    Opcodes/spectra.c
-    Opcodes/ambicode1.c
-    Opcodes/sfont.c
-    Opcodes/grain4.c
-    Opcodes/hrtferX.c
-    Opcodes/loscilx.c
-    Opcodes/minmax.c
-    Opcodes/pan2.c
-    Opcodes/arrays.c
-    Opcodes/phisem.c
-    Opcodes/hrtfopcodes.c
-    Opcodes/vbap.c
-    Opcodes/vbap1.c
-    Opcodes/vbap_n.c
-    Opcodes/vbap_zak.c
-    Opcodes/vaops.c
-    Opcodes/ugakbari.c
-    Opcodes/harmon.c
-    Opcodes/pitchtrack.c
-    Opcodes/partikkel.c
-    Opcodes/shape.c
-    Opcodes/tabaudio.c
-    Opcodes/tabsum.c
-    Opcodes/crossfm.c
-    Opcodes/pvlock.c
-    Opcodes/fareyseq.c
-    Opcodes/modmatrix.c
-    Opcodes/scoreline.c
-    Opcodes/modal4.c
-    Opcodes/physutil.c
-    Opcodes/physmod.c
-    Opcodes/mandolin.c
-    Opcodes/singwave.c
-    Opcodes/fm4op.c
-    Opcodes/moog1.c
-    Opcodes/shaker.c
-    Opcodes/bowedbar.c
-    Opcodes/gab/tabmorph.c
-    Opcodes/gab/hvs.c
-    Opcodes/gab/sliderTable.c
-    Opcodes/gab/newgabopc.c
-    Opcodes/ftest.c
-    Opcodes/hrtfearly.c
-    Opcodes/hrtfreverb.c
-    Opcodes/cpumeter.c
-    Opcodes/gendy.c
-    Opcodes/tl/sc_noise.c
-    Opcodes/afilters.c
-    Opcodes/wpfilters.c
-    Opcodes/zak.c
-    Opcodes/lufs.c
-    Opcodes/date.c
-    Opcodes/system_call.c
-    Opcodes/liveconv.c
-    Opcodes/sterrain.c
-    Opcodes/gammatone.c
-    Opcodes/fareygen.c
-    Opcodes/quadbezier.c
-    Opcodes/framebuffer.c
-    Opcodes/cellular.c
-    Opcodes/exciter.c
-    Opcodes/buchla.c
-    Opcodes/select.c
-    Opcodes/serial.c
-    Opcodes/counter.c
-    Opcodes/platerev.c
-    Opcodes/sequencer.c
-    Opcodes/pvsgendy.c
     Opcodes/emugens/emugens.c
     Opcodes/emugens/scugens.c
     Top/argdecode.c
@@ -866,7 +794,6 @@ endif()
 
 
 set(stdopcod_SRCS
-    Opcodes/ambicode.c
     Opcodes/bbcut.c
     Opcodes/biquad.c
     Opcodes/butter.c
@@ -878,12 +805,8 @@ set(stdopcod_SRCS
     Opcodes/flanger.c
     Opcodes/follow.c
     Opcodes/fout.c
-    Opcodes/freeverb.c
     Opcodes/ftconv.c
     Opcodes/ftgen.c
-    Opcodes/gab/gab.c
-    Opcodes/gab/vectorial.c
-    Opcodes/grain.c
     Opcodes/locsig.c
     Opcodes/lowpassr.c
     Opcodes/metro.c
@@ -891,50 +814,16 @@ set(stdopcod_SRCS
     Opcodes/midiops3.c
     Opcodes/newfils.c
     Opcodes/nlfilt.c
-    Opcodes/oscbnk.c
-    Opcodes/pluck.c
-    Opcodes/paulstretch.c
-    Opcodes/repluck.c
-    Opcodes/reverbsc.c
     Opcodes/seqtime.c
     Opcodes/sndloop.c
     Opcodes/sndwarp.c
-    Opcodes/space.c
-    Opcodes/spat3d.c
-    Opcodes/syncgrain.c
     Opcodes/ugens7.c
     Opcodes/ugens9.c
     Opcodes/ugensa.c
-    Opcodes/uggab.c
-    Opcodes/ugmoss.c
-    Opcodes/ugnorman.c
     Opcodes/ugsc.c
-    Opcodes/wave-terrain.c
-    Opcodes/wterrain2.c
     Opcodes/stdopcod.c
     Opcodes/socksend.c
     Opcodes/sockrecv.c)
-
-set(cs_pvs_ops_SRCS
-    Opcodes/ifd.c
-    Opcodes/partials.c
-    Opcodes/psynth.c
-    Opcodes/pvsbasic.c
-    Opcodes/pvscent.c
-    Opcodes/pvsdemix.c
-    Opcodes/pvs_ops.c
-    Opcodes/pvsband.c
-    Opcodes/pvsbuffer.c)
-
-set(oldpvoc_SRCS
-    Opcodes/dsputil.c
-    Opcodes/pvadd.c
-    Opcodes/pvinterp.c
-    Opcodes/pvocext.c
-    Opcodes/pvread.c
-    Opcodes/ugens8.c
-    Opcodes/vpvoc.c
-    Opcodes/pvoc.c)
 
 set(mp3in_SRCS
     Opcodes/mp3in.c
@@ -946,8 +835,7 @@ set(mp3in_SRCS
     InOut/libmpadec/mpadec.c
     InOut/libmpadec/mp3dec.c)
 
-list(APPEND libcsound_SRCS ${stdopcod_SRCS} ${cs_pvs_ops_SRCS}
-${oldpvoc_SRCS} ${mp3in_SRCS})
+list(APPEND libcsound_SRCS ${stdopcod_SRCS} ${mp3in_SRCS})
 
 if(BUILD_PERFTHREAD_CLASS)
  list(APPEND libcsound_SRCS "Top/csPerfThread.cpp")

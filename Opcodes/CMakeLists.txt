@@ -1,8 +1,8 @@
 option(BUILD_DSSI_OPCODES "Build the DSSI opcodes" OFF)
 option(BUILD_OSC_OPCODES "Build the OSC Opcodes" ON)
-option(BUILD_PADSYNTH_OPCODES "Build the Padsynth opcode" ON)
-option(BUILD_SCANSYN_OPCODES "Build the scansyn opcodes" ON)
-option(BUILD_DEPRECATED_OPCODES "Build deprecated opcodes" ON)
+option(BUILD_PADSYNTH_OPCODES "Build the Padsynth opcode" OFF)
+option(BUILD_SCANSYN_OPCODES "Build the scansyn opcodes" OFF)
+option(BUILD_DEPRECATED_OPCODES "Build deprecated opcodes" OFF)
 
 ##########################################
 ## Plugin opcodes are in the following categories ##

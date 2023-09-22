@@ -1152,9 +1152,11 @@ extern int32_t afilts_localops_init(CSOUND *, void *);
 extern int32_t biquad_localops_init(CSOUND *, void *);
 extern int32_t butter_localops_init(CSOUND *, void *);
 extern int32_t compress_localops_init(CSOUND *, void *);
+extern int32_t dcblock_localops_init(CSOUND *, void *);
 extern int32_t eqfil_localops_init(CSOUND *, void *);
 extern int32_t fout_localops_init(CSOUND *, void *);
 extern int32_t ftgen_localops_init(CSOUND *, void *);
+extern int32_t logic_localops_init(CSOUND *, void *);
 extern int32_t midiops2_localops_init(CSOUND *, void *);
 extern int32_t pinker_localops_init(CSOUND *, void *);
 extern int32_t scugens_localops_init(CSOUND *, void *);
@@ -1174,6 +1176,7 @@ const INITFN staticmodules[] = {
     biquad_localops_init,
     butter_localops_init,
     compress_localops_init,
+    dcblock_localops_init,
     eqfil_localops_init,
     fout_localops_init,
     ftgen_localops_init,

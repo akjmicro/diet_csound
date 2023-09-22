@@ -549,8 +549,6 @@ static int32_t distort(CSOUND *csound, DISTORT *p)
 /* Coded by Hans Mikelson November 1998                                    */
 /***************************************************************************/
 
-
-
 static int32_t vcoset(CSOUND *csound, VCO *p)
 {
     /* Number of bytes in the delay */

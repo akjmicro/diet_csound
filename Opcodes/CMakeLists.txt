@@ -1,5 +1,5 @@
 option(BUILD_DSSI_OPCODES "Build the DSSI opcodes" OFF)
-option(BUILD_OSC_OPCODES "Build the OSC Opcodes" ON)
+option(BUILD_OSC_OPCODES "Build the OSC Opcodes" OFF)
 option(BUILD_PADSYNTH_OPCODES "Build the Padsynth opcode" OFF)
 option(BUILD_SCANSYN_OPCODES "Build the scansyn opcodes" OFF)
 option(BUILD_DEPRECATED_OPCODES "Build deprecated opcodes" OFF)
@@ -52,7 +52,7 @@ endif()
 
 ## platform-dependent opcodes ##
 if(UNIX)
-    make_plugin(control control.c)
+    #make_plugin(control control.c)
     make_plugin(urandom urandom.c)
 endif()
 

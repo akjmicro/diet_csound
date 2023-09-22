@@ -762,9 +762,11 @@ set(libcsound_SRCS
     Opcodes/biquad.c
     Opcodes/butter.c
     Opcodes/compress.c
+    Opcodes/dcblockr.c
     Opcodes/eqfil.c
     Opcodes/fout.c
     Opcodes/ftgen.c
+    Opcodes/logic_ops.c
     Opcodes/midiops2.c
     Opcodes/pinker.c
     Opcodes/emugens/emugens.c

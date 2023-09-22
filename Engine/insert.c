@@ -33,7 +33,6 @@
 #include "interlocks.h"
 #include "csound_type_system.h"
 #include "csound_standard_types.h"
-#include "csound_orc_semantics.h"
 #include <inttypes.h>
 
 static  void    showallocs(CSOUND *);
@@ -112,10 +111,9 @@ static int init_pass(CSOUND *csound, INSDS *ip) {
   csound->ids = (OPDS *)ip;
   csound->mode = 1;
   while (error == 0 && (csound->ids = csound->ids->nxti) != NULL) {
-    if (UNLIKELY(csound->oparms->odebug)) {
     csound->op = csound->ids->optext->t.oentry->opname;
+    if (UNLIKELY(csound->oparms->odebug))
       csound->Message(csound, "init %s:\n", csound->op);
-    }
     error = (*csound->ids->iopadr)(csound, csound->ids);
   }
   csound->mode = 0;
@@ -316,7 +314,6 @@ int insert_event(CSOUND *csound, int insno, EVTBLK *newevtp)
   int tie=0, i;
   int  n, error = 0;
   MYFLT  *flp, *fep;
-  MYFLT newp1 = 0;
 
   if (UNLIKELY(csound->advanceCnt))
     return 0;
@@ -358,9 +355,8 @@ int insert_event(CSOUND *csound, int insno, EVTBLK *newevtp)
   }
   /* If named ensure we have the fraction */
   if (csound->engineState.instrtxtp[insno]->insname && newevtp->strarg)
-    newp1 = named_instr_find(csound, newevtp->strarg);
+    newevtp->p[1] = named_instr_find(csound, newevtp->strarg);
 
-  newevtp->p[1] = newp1 != 0 ? newp1 : newevtp->p[1] ;
   /* if find this insno, active, with indef (tie) & matching p1 */
   for (ip = tp->instance; ip != NULL; ip = ip->nxtinstance) {
     if (ip->actflg && ip->offtim < 0.0 && ip->p1.value == newevtp->p[1]) {
@@ -1032,12 +1028,6 @@ void free_instr_var_memory(CSOUND* csound, INSDS* ip) {
   CS_VAR_POOL* pool = instrDef->varPool;
   CS_VARIABLE* current = pool->head;
 
-  if (ip->lclbas == NULL) {
-      // This seems to be the case when freeing instr 0...
-      return;
-  }
-
-  
   while (current != NULL) {
     CS_TYPE* varType = current->varType;
     if (varType->freeVariableMemory != NULL) {
@@ -1227,12 +1217,6 @@ int csoundPerfError(CSOUND *csound, OPDS *h, const char *s, ...)
   return csound->perferrcnt;                /* contin from there */
 }
 
-static inline int32_t byte_order(void)
-{
-    const int32_t one = 1;
-    return (!*((char*) &one));
-}
-
 int subinstrset_(CSOUND *csound, SUBINST *p, int instno)
 {
   OPDS    *saved_ids = csound->ids;
@@ -1306,43 +1290,16 @@ int subinstrset_(CSOUND *csound, SUBINST *p, int instno)
   if (UNLIKELY(p->INOCOUNT >
                (unsigned int)(csound->engineState.instrtxtp[instno]->pmax + 1)))
     return csoundInitError(csound, Str("subinstr: too many p-fields"));
-#ifdef USE_DOUBLE
   union {
     MYFLT d;
-    int32 i[2];
-  } ch;
-  int sel = byte_order()==0? 1 :0;
-  int str_cnt = 0, len = 0;
-  char *argstr;
-  for (n = 1; (unsigned int) n < p->INOCOUNT; n++){
-    if (IS_STR_ARG(p->ar[inarg_ofs + n])) {
-      ch.d = SSTRCOD;
-      ch.i[sel] += str_cnt & 0xffff;
-      (pfield + n)->value = ch.d;
-      argstr = ((STRINGDAT *)p->ar[inarg_ofs + n])->data;
-      if (str_cnt == 0)
-        p->ip->strarg = csound->Calloc(csound, strlen(argstr)+1);
-      else
-        p->ip->strarg = csound->ReAlloc(csound, p->ip->strarg,
-                                        len+strlen(argstr)+1);
-      strcpy(p->ip->strarg + len, argstr);
-      len += strlen(argstr)+1;
-      str_cnt++;
-    }
-
-    else (pfield + n)->value = *p->ar[inarg_ofs + n];
-  }
-  #else
-  union {
-    MYFLT d;
-    int32 j;
+    int32 i;
   } ch;
   int str_cnt = 0, len = 0;
   char *argstr;
   for (n = 1; (unsigned int) n < p->INOCOUNT; n++){
     if (IS_STR_ARG(p->ar[inarg_ofs + n])) {
       ch.d = SSTRCOD;
-      ch.j += str_cnt & 0xffff;
+      ch.i = str_cnt & 0xffff;
       (pfield + n)->value = ch.d;
       argstr = ((STRINGDAT *)p->ar[inarg_ofs + n])->data;
       if (str_cnt == 0)
@@ -1356,7 +1313,6 @@ int subinstrset_(CSOUND *csound, SUBINST *p, int instno)
     }
     else (pfield + n)->value = *p->ar[inarg_ofs + n];
   }
-#endif
   /* allocate memory for a temporary store of spout buffers */
   if (!init_op && !(pip->reinitflag | pip->tieflag))
     csoundAuxAlloc(csound,
@@ -1456,10 +1412,8 @@ int useropcdset(CSOUND *csound, UOPCODE *p)
       return csound->InitError(csound, Str("Cannot find instr %d (UDO %s)\n"),
                                instno, inm->name);
     /* set local ksmps if defined by user */
-    /* VL: 9.2.22 we are disabling this unused and confusing feature of 
-       a hidden local sampling rate parameter on 7.x */
-    /*
     n = p->OUTOCOUNT + p->INCOUNT - 1;
+
     if (*(p->ar[n]) != FL(0.0)) {
       i = (unsigned int) *(p->ar[n]);
       if (UNLIKELY(i < 1 || i > csound->ksmps ||
@@ -1468,10 +1422,7 @@ int useropcdset(CSOUND *csound, UOPCODE *p)
                                inm->name, i);
       }
       local_ksmps = i;
-      } 
-    */
-    n = p->OUTOCOUNT + p->INCOUNT - 1;
-  
+    }
 
     if (!p->ip) {
 
@@ -1649,11 +1600,12 @@ int xinset(CSOUND *csound, XIN *p)
   tmp = buf->iobufp_ptrs; // this is used to record the UDO's internal vars
   // for copying at perf-time
   current = inm->in_arg_pool->head;
+
   for (i = 0; i < inm->inchns; i++) {
     void* in = (void*)bufs[i];
     void* out = (void*)p->args[i];
     tmp[i + inm->outchns] = out;
-    current->varType->copyValue(csound, current->varType, out, in);
+    current->varType->copyValue(csound, out, in);
     current = current->next;
   }
 
@@ -1685,9 +1637,10 @@ int xoutset(CSOUND *csound, XOUT *p)
     if (csoundGetTypeForArg(in) != &CS_VAR_TYPE_K &&
         /*csoundGetTypeForArg(in) != &CS_VAR_TYPE_F &&*/
         csoundGetTypeForArg(in) != &CS_VAR_TYPE_A)
-      current->varType->copyValue(csound, current->varType, out, in);
+      current->varType->copyValue(csound, out, in);
     current = current->next;
   }
+
   return OK;
 }
 
@@ -2022,7 +1975,7 @@ int useropcd1(CSOUND *csound, UOPCODE *p)
           // This one checks if an array has a subtype of 'i'
           void* in = (void*)external_ptrs[i + inm->outchns];
           void* out = (void*)internal_ptrs[i + inm->outchns];
-          current->varType->copyValue(csound, current->varType, out, in);
+          current->varType->copyValue(csound, out, in);
         } else if (current->varType == &CS_VAR_TYPE_A) {
           MYFLT* in = (void*)external_ptrs[i + inm->outchns];
           MYFLT* out = (void*)internal_ptrs[i + inm->outchns];
@@ -2113,6 +2066,7 @@ int useropcd1(CSOUND *csound, UOPCODE *p)
     this_instr->ksmps_offset = ofs;
     ofs = start;
     if (UNLIKELY(early)) this_instr->ksmps_no_end = early % lksmps;
+
     do {
       this_instr->kcounter++;
       /* copy a-sig inputs, accounting for offset */
@@ -2130,7 +2084,7 @@ int useropcd1(CSOUND *csound, UOPCODE *p)
           // This one checks if an array has a subtype of 'i'
           void* in = (void*)external_ptrs[i + inm->outchns];
           void* out = (void*)internal_ptrs[i + inm->outchns];
-          current->varType->copyValue(csound, current->varType, out, in);
+          current->varType->copyValue(csound, out, in);
         } else if (current->varType == &CS_VAR_TYPE_A) {
           MYFLT* in = (void*)external_ptrs[i + inm->outchns];
           MYFLT* out = (void*)internal_ptrs[i + inm->outchns];
@@ -2191,6 +2145,7 @@ int useropcd1(CSOUND *csound, UOPCODE *p)
               count *= src->sizes[j];
             }
           }
+
           for (j = 0; j < count; j++) {
             int memberOffset = j * (src->arrayMemberSize / sizeof(MYFLT));
             MYFLT* in = src->data + memberOffset;
@@ -2259,8 +2214,9 @@ int useropcd1(CSOUND *csound, UOPCODE *p)
             }
           }
         }
+
       } else {
-        current->varType->copyValue(csound, current->varType, out, in);
+        current->varType->copyValue(csound, out, in);
       }
     }
     current = current->next;
@@ -2318,7 +2274,7 @@ int useropcd2(CSOUND *csound, UOPCODE *p)
       } else {
         void* in = (void*)external_ptrs[i + inm->outchns];
         void* out = (void*)internal_ptrs[i + inm->outchns];
-        current->varType->copyValue(csound, current->varType, out, in);
+        current->varType->copyValue(csound, out, in);
         //                memcpy(out, in, p->buf->in_arg_sizes[i]);
       }
     }
@@ -2356,7 +2312,7 @@ int useropcd2(CSOUND *csound, UOPCODE *p)
         void* in = (void*)internal_ptrs[i];
         void* out = (void*)external_ptrs[i];
         //            memcpy(out, in, p->buf->out_arg_sizes[i]);
-        current->varType->copyValue(csound, current->varType, out, in);
+        current->varType->copyValue(csound, out, in);
       }
     }
     current = current->next;
@@ -2499,7 +2455,6 @@ static void instance(CSOUND *csound, int insno)
       ip->p1.value = (MYFLT) insno;
       continue;
     }
-
     if (UNLIKELY(odebug))
       csound->Message(csound, Str("op (%s) allocated at %p\n"),
                       ep->opname, opds);
@@ -2555,30 +2510,6 @@ static void instance(CSOUND *csound, int insno)
       }
       else if (arg->type == ARG_LOCAL) {
         fltp = lclbas + var->memBlockIndex;
-
-        if (arg->structPath != NULL) {
-          char* path = cs_strdup(csound, arg->structPath);
-          char *next, *th;
-
-          next = cs_strtok_r(path, ".", &th);
-          while (next != NULL) {
-            CS_TYPE* type = csoundGetTypeForArg(fltp);
-            CS_STRUCT_VAR* structVar = (CS_STRUCT_VAR*)fltp;
-            CONS_CELL* members = type->members;
-            int i = 0;
-            while(members != NULL) {
-              CS_VARIABLE* member = (CS_VARIABLE*)members->value;
-              if (!strcmp(member->varName, next)) {
-                fltp = &(structVar->members[i]->value);
-                break;
-              }
-
-              i++;
-              members = members->next;
-            }
-            next = cs_strtok_r(NULL, ".", &th);
-          }
-        }
       }
       else if (arg->type == ARG_PFIELD) {
         CS_VAR_MEM* pfield = lcloffbas + arg->index;
@@ -2618,29 +2549,6 @@ static void instance(CSOUND *csound, int insno)
       }
       else if (arg->type == ARG_LOCAL){
         argpp[n] = lclbas + var->memBlockIndex;
-        if (arg->structPath != NULL) {
-          char* path = cs_strdup(csound, arg->structPath);
-          char *next, *th;
-
-          next = cs_strtok_r(path, ".", &th);
-            while (next != NULL) {
-              CS_STRUCT_VAR* structVar = (CS_STRUCT_VAR*)argpp[n];
-              CS_TYPE* type = csoundGetTypeForArg(argpp[n]);
-              CONS_CELL* members = type->members;
-              int i = 0;
-              while(members != NULL) {
-                CS_VARIABLE* member = (CS_VARIABLE*)members->value;
-                  if (!strcmp(member->varName, next)) {
-                    argpp[n] = &(structVar->members[i]->value);
-                    break;
-                  }
-
-                  i++;
-                  members = members->next;
-              }
-              next = cs_strtok_r(NULL, ".", &th);
-            }
-        }
       }
       else if (arg->type == ARG_LABEL) {
         argpp[n] = (MYFLT*)(opMemStart +
@@ -2651,6 +2559,7 @@ static void instance(CSOUND *csound, int insno)
                         arg->type);
       }
     }
+
   }
 
   /* VL 13-12-13: point the memory to the local ksmps & kr variables,

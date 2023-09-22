@@ -28,7 +28,7 @@
 
 typedef struct FOUT_FILE_ {
     OPDS    h;
-    void *sf;
+    SNDFILE *sf;
     FILE    *f;
     void    *fd;
     int32_t     bufsize;

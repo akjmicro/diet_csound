@@ -35,8 +35,4 @@
 #include "find_opcode.h"
 char* get_arg_type2(CSOUND* csound, TREE* tree, TYPE_TABLE* typeTable);
 
-typedef struct csstructvar {
-  CS_VAR_MEM** members;
-} CS_STRUCT_VAR;
-
 #endif

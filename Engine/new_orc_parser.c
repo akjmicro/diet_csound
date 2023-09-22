@@ -60,6 +60,7 @@ extern int csound_orclex_init(void *);
 extern void csound_orcset_extra(void *, void *);
 extern void csound_orcset_lineno(int, void*);
 extern int csound_orclex_destroy(void *);
+extern void init_symbtab(CSOUND*);
 extern void print_tree(CSOUND *, char *, TREE *);
 extern TREE* verify_tree(CSOUND *, TREE *, TYPE_TABLE*);
 extern TREE *csound_orc_expand_expressions(CSOUND *, TREE *);
@@ -202,6 +203,7 @@ TREE *csoundParseOrc(CSOUND *csound, const char *str)
       csound->DebugMsg(csound, "yielding >>%s<<\n",
                        corfile_body(csound->expanded_orc));
       corfile_rm(csound, &csound->orchstr);
+
     }
     {
       /* VL 15.3.2015 allocating memory here will cause
@@ -215,9 +217,11 @@ TREE *csoundParseOrc(CSOUND *csound, const char *str)
 
       /* Parse */
       memset(&pp, '\0', sizeof(PARSE_PARM));
+      init_symbtab(csound);
 
       csound_orcdebug = O->odebug;
       csound_orclex_init(&pp.yyscanner);
+
 
       csound_orcset_extra(&pp, pp.yyscanner);
       csound_orc_scan_buffer(corfile_body(csound->expanded_orc),

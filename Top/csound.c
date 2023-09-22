@@ -114,14 +114,6 @@ extern OENTRY opcodlst_1[];
 #define STRING_HASH(arg) STRSH(arg)
 #define STRSH(arg) #arg
 
-/* return 1 if the current op thread is init-time,
-   zero if not.
-   return value may be incorrect in realtime mode
-*/
-int csoundIsInitThread(CSOUND *csound) {
-  return csound->ids ? 1 : 0;
-}
-
 void print_csound_version(CSOUND* csound)
 {
 #ifdef USE_DOUBLE
@@ -153,13 +145,9 @@ void print_csound_version(CSOUND* csound)
 }
 
 void print_sndfile_version(CSOUND* csound) {
-#ifdef USE_LIBSNDFILE
         char buffer[128];
-        sflib_command(NULL, SFC_GET_LIB_VERSION, buffer, 128);
+        sf_command(NULL, SFC_GET_LIB_VERSION, buffer, 128);
         csoundErrorMsg(csound, "%s\n", buffer);
-#else
-        csoundErrorMsg(csound, "%s\n", "No soundfile IO");
-#endif
 }
 
 void print_engine_parameters(CSOUND *csound) {
@@ -548,18 +536,10 @@ static const CSOUND cenviron_ = {
     csoundCepsLP,
     csoundLPrms,
     csoundCreateThread2,
-    cs_hash_table_create,
-    cs_hash_table_get,
-    cs_hash_table_put,
-    cs_hash_table_remove,
-    cs_hash_table_free,
-    cs_hash_table_get_key,
-    cs_hash_table_keys,
-    cs_hash_table_values,
-    csoundPeekCircularBuffer,
     {
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-      NULL, NULL, NULL
+      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+      NULL, NULL
     },
     /* ------- private data (not to be used by hosts or externals) ------- */
     /* callback function pointers */
@@ -606,7 +586,7 @@ static const CSOUND cenviron_ = {
           NULL, NULL, NULL, NULL,
           0,0,
           NULL,
-          0,0},
+          0,0,0},
         0,0,0,
         //0,
         NULL,
@@ -964,8 +944,7 @@ static const CSOUND cenviron_ = {
       0,             /*    fft_lib */
       0,             /* echo */
       0.0,           /* limiter */
-      DFLT_SR, DFLT_KR,  /* defaults */
-      0  /* mp3 mode */
+      DFLT_SR, DFLT_KR  /* defaults */
     },
     {0, 0, {0}}, /* REMOT_BUF */
     NULL,           /* remoteGlobals        */
@@ -996,6 +975,7 @@ static const CSOUND cenviron_ = {
     1,              /* orcLineOffset */
     0,              /* scoLineOffset */
     NULL,           /* csdname */
+    -1,             /*  parserUdoflag */
     0,              /*  parserNamedInstrFlag */
     0,              /*  tran_nchnlsi */
     0,              /* Count of score strings */
@@ -1015,6 +995,7 @@ static const CSOUND cenviron_ = {
     0,              /* csdebug_data */
     kperf_nodebug,  /* current kperf function - nodebug by default */
     0,              /* which score parser */
+    NULL,           /* symbtab */
     0,              /* print_version */
     1,              /* inZero */
     NULL,           /* msg_queue */
@@ -1038,7 +1019,8 @@ static const CSOUND cenviron_ = {
     NULL,           /* op */
     0,              /* mode */
     NULL,           /* opcodedir */
-    NULL           /* score_srt */
+    NULL,           /* score_srt */
+    0               /* mp3 mode */
 };
 
 void csound_aops_init_tables(CSOUND *cs);
@@ -1814,7 +1796,6 @@ int kperf_nodebug(CSOUND *csound)
             if (ip->ksmps == csound->ksmps) {
               csound->mode = 2;
               while (error == 0 &&
-                      opstart != NULL &&
                      (opstart = opstart->nxtp) != NULL &&
                      ip->actflg) {
                 opstart->insdshead->pds = opstart;
@@ -3208,7 +3189,7 @@ PUBLIC void csoundSetExitGraphCallback(CSOUND *csound,
 /*
  * OPCODES
  */
-//void add_to_symbtab(CSOUND *csound, OENTRY *ep);
+void add_to_symbtab(CSOUND *csound, OENTRY *ep);
 
 static CS_NOINLINE int opcode_list_new_oentry(CSOUND *csound,
                                               const OENTRY *ep)
@@ -3263,7 +3244,7 @@ PUBLIC int csoundAppendOpcode(CSOUND *csound,
     tmpEntry.kopadr     = kopadr;
     tmpEntry.aopadr     = aopadr;
     err = opcode_list_new_oentry(csound, &tmpEntry);
-    //add_to_symbtab(csound, &tmpEntry);
+    add_to_symbtab(csound, &tmpEntry);
     if (UNLIKELY(err))
       csoundErrorMsg(csound, Str("Failed to allocate new opcode entry."));
 
@@ -3528,6 +3509,9 @@ PUBLIC void csoundReset(CSOUND *csound)
 
     csound->engineState.stringPool = cs_hash_table_create(csound);
     csound->engineState.constantsPool = cs_hash_table_create(csound);
+    if (csound->symbtab != NULL)
+      cs_hash_table_mfree_complete(csound, csound->symbtab);
+    csound->symbtab = NULL;
     csound->engineStatus |= CS_STATE_PRE;
     csound_aops_init_tables(csound);
     create_opcode_table(csound);

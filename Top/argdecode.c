@@ -267,7 +267,7 @@ static const char *longUsageList[] = {
   Str_noop("--utility=NAME          run utility program"),
   Str_noop("--verbose               verbose orch translation"),
   Str_noop("--list-opcodes          list opcodes in this version"),
-  Str_noop("--list-opcodesN         list opcodes in style N in this version"),
+   Str_noop("--list-opcodesN         list opcodes in style N in this version"),
   Str_noop("--dither                dither output"),
   Str_noop("--dither-triangular     dither output with triangular distribution"),
   Str_noop("--dither-uniform        dither output with rectanular distribution"),
@@ -1257,7 +1257,7 @@ static int decode_long(CSOUND *csound, char *s, int argc, char **argv)
     }
      else if (!(strcmp(s, "vbr"))) {
   #ifdef SNDFILE_MP3    
-      O->mp3_mode = SF_BITRATE_MODE_VARIABLE;
+      csound->mp3_mode = SF_BITRATE_MODE_VARIABLE;
   #endif    
       return 1;
     }
@@ -1581,7 +1581,7 @@ PUBLIC int argdecode(CSOUND *csound, int argc, const char **argv_)
         /* 0: normal, 1: ignore, 2: fail */
         if (csound->orcname_mode == 2) {
           csound->Die(csound, Str("error: orchestra and score name not "
-                                  "allowed in .csound7rc"));
+                                  "allowed in .csound6rc"));
         }
         else if (csound->orcname_mode == 0) {
           if (csound->orchname == NULL) /* VL dec 2016: better duplicate these */

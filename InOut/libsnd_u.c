@@ -23,11 +23,12 @@
 
 #include "csoundCore.h"
 #include "soundio.h"
+#include <sndfile.h>
 
 void rewriteheader(void *ofd)
 {
     if (LIKELY(ofd != NULL))
-      sflib_command((SNDFILE *)ofd, SFC_UPDATE_HEADER_NOW, NULL, 0);
+      sf_command((SNDFILE *)ofd, SFC_UPDATE_HEADER_NOW, NULL, 0);
 }
 
 /* Stand-Alone sndgetset() */
@@ -95,7 +96,7 @@ static int sreadin(CSOUND *csound, SNDFILE *infd, MYFLT *inbuf,
     /* return the number of samples read */
     int   n, ntot = 0;
     do {
-      n = sflib_read_MYFLT(infd, inbuf + ntot, nsamples - ntot);
+      n = sf_read_MYFLT(infd, inbuf + ntot, nsamples - ntot);
       if (UNLIKELY(n < 0))
         csound->Die(csound, Str("soundfile read error"));
     } while (n > 0 && (ntot += n) < nsamples);
@@ -118,13 +119,13 @@ void *sndgetset(CSOUND *csound, void *p_)
     int     n;
     int     framesinbuf, skipframes;
     char    *sfname;
-    SFLIB_INFO sfinfo;
+    SF_INFO sfinfo;
 
     sfname = &(p->sfname[0]);
     /* IV - Feb 26 2005: should initialise sfinfo structure */
-    memset(&sfinfo, 0, sizeof(SFLIB_INFO));
+    memset(&sfinfo, 0, sizeof(SF_INFO));
     sfinfo.format = (p->format<0 ?        /* store default sample format, */
-                     ((int) FORMAT2SF(-p->format) | TYPE2SF(TYP_RAW)) : 0);
+                     ((int) FORMAT2SF(-p->format) | SF_FORMAT_RAW) : 0);
     sfinfo.channels = 1;                /* number of channels, */
     if (p->analonly)                    /* and sample rate */
       sfinfo.samplerate = (int) p->sr;
@@ -138,7 +139,7 @@ void *sndgetset(CSOUND *csound, void *p_)
                                      CSFTYPE_UNKNOWN_AUDIO, 0);
     if (UNLIKELY(p->fd == NULL)) {
       csound->ErrorMsg(csound, Str("soundin cannot open %s: %s"),
-                       sfname, sflib_strerror(NULL));
+                       sfname, sf_strerror(NULL));
       goto err_return;
     }
     /* & record fullpath filnam */
@@ -230,7 +231,7 @@ void *sndgetset(CSOUND *csound, void *p_)
     }
     else {                                      /* for greater skiptime: */
       /* else seek to bndry */
-      if (UNLIKELY(sflib_seek(p->sinfd, (sf_count_t) skipframes, SEEK_SET) < 0)) {
+      if (UNLIKELY(sf_seek(p->sinfd, (sf_count_t) skipframes, SEEK_SET) < 0)) {
         csound->ErrorMsg(csound, Str("soundin seek error"));
         goto err_return;
       }
@@ -355,12 +356,12 @@ char *type2string(int x)
 
 int sfsampsize(int type)
 {
-  switch (TYPE2ENC(type)) {
-      case AE_SHORT:   return 2;     /* Signed 16 bit data */
-      case AE_LONG:  return 4;     /* Signed 32 bit data */
-      case AE_FLOAT:   return 4;     /* 32 bit float data */
-      case AE_24INT:  return 3;     /* Signed 24 bit data */
-      case AE_DOUBLE:  return 8;     /* 64 bit float data */
+    switch (type & SF_FORMAT_SUBMASK) {
+      case SF_FORMAT_PCM_16:  return 2;     /* Signed 16 bit data */
+      case SF_FORMAT_PCM_32:  return 4;     /* Signed 32 bit data */
+      case SF_FORMAT_FLOAT:   return 4;     /* 32 bit float data */
+      case SF_FORMAT_PCM_24:  return 3;     /* Signed 24 bit data */
+      case SF_FORMAT_DOUBLE:  return 8;     /* 64 bit float data */
     }
     return 1;
 }
@@ -430,6 +431,6 @@ int type2csfiletype(int type, int encoding)
 int sftype2csfiletype(int type)
 {
     /* mask out the endian-ness bits */
-  int typemod = type & ENDIANESSBITS;
-  return type2csfiletype(SF2TYPE(typemod), SF2FORMAT(typemod));
+    int typemod = type & (SF_FORMAT_TYPEMASK | SF_FORMAT_SUBMASK);
+    return type2csfiletype(SF2TYPE(typemod), SF2FORMAT(typemod));
 }

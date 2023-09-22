@@ -16,7 +16,7 @@ if (USE_VCPKG)
     elseif(APPLE)
         set(VCPKG_TARGET_TRIPLET "x64-osx")
     elseif (UNIX)
-        set(VCPKG_TARGET_TRIPLET "x64-linux-csound")
+        set(VCPKG_TARGET_TRIPLET "x64-linux")
     endif()
 
     set(VCPKG_FEATURE_FLAGS versions)
@@ -34,7 +34,7 @@ project(Csound)
 
 ENABLE_TESTING()
 
-if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
   set(CMAKE_COMPILER_IS_CLANG 1)
 endif()
 
@@ -46,15 +46,12 @@ if(NOT MSVC)
 endif()
 
 # Project definitions
-set(APIVERSION "7.0")
-set(CS_VERSION "7")
-set(CS_SUBVER "0")
-set(CS_PATCHLEVEL "0")
+set(APIVERSION "6.0")
+set(CS_VERSION "6")
+set(CS_SUBVER "18")
+set(CS_PATCHLEVEL "1")
 
-message(STATUS "Csound version:
-${CS_VERSION}.${CS_SUBVER}.${CS_PATCHLEVEL}")
-
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/README.md.in ${CMAKE_CURRENT_SOURCE_DIR}/README.md)
+message(STATUS "Csound version: ${CS_VERSION}.${CS_SUBVER}.${CS_PATCHLEVEL}")
 
 set(MACOSX_FRAMEWORK_BUNDLE_VERSION
 "${CS_VERSION}.${CS_SUBVER}.${CS_PATCHLEVEL}")
@@ -177,7 +174,7 @@ endif()
 # Optional targets, they should all default to ON (check_deps will disable them if not possible to build)
 option(USE_DOUBLE "Set to use double-precision floating point for audio samples." ON)
 option(USE_LIBSNDFILE "Use libsndfile for sndfile IO, if available" ON)
-option(BUILD_PERFTHREAD_CLASS "Include the Csound performance thread support (C++) " ON)
+option(BUILD_PERFTHREAD_CLASS "Include the Csound performance thread support (C++) " OFF)
 option(BUILD_UTILITIES "Build stand-alone executables for utilities that can also be used with -U" OFF)
 option(NEW_PARSER_DEBUG "Enable tracing of new parser" OFF)
 option(BUILD_MULTI_CORE "Enable building for multicore system" ON)
@@ -188,7 +185,7 @@ option(USE_LRINT "Use lrint/lrintf for converting floating point values to integ
 option(USE_CURL "Use CURL library" ON)
 option(BUILD_RELEASE "Build for release" ON)
 option(BUILD_INSTALLER "Build installer" OFF)
-option(BUILD_TESTS "Build tests" ON)
+option(BUILD_TESTS "Build tests" OFF)
 option(LEXER_DEBUG "Build lexer with debug option" OFF)
 option(USE_GIT_COMMIT "Show the git commit in version information" ON)
 option(REQUIRE_PTHREADS "For non-Windows systems, set whether Csound will use threads or not" ON)
@@ -713,7 +710,6 @@ set(libcsound_SRCS
     Engine/csound_data_structures.c
     Engine/pools.c
     Engine/ugen.c
-    InOut/soundfile.c
     InOut/libsnd.c
     InOut/libsnd_u.c
     InOut/midifile.c
@@ -805,7 +801,7 @@ endif()
 
 
 if(BUILD_PERFTHREAD_CLASS)
- list(APPEND libcsound_SRCS "Top/csPerfThread.cpp")
+ list(APPEND libcsound_SRCS "interfaces/csPerfThread.cpp")
 endif()
 
 if(INIT_STATIC_MODULES)
@@ -1067,7 +1063,7 @@ endif()
 
 # Linux platforms may or may not have a separate libintl (may be a part of of libc)
 set(LIBINTL_AVAIL (LIBINTL_LIBRARY OR LINUX))
-check_deps(USE_GETTEXT LIBINTL_AVAIL GETTEXT_MSGFMT_EXECUTABLE)
+check_deps(USE_GETTEXT LIBINTL_HEADER LIBINTL_AVAIL GETTEXT_MSGFMT_EXECUTABLE)
 if(USE_GETTEXT)
     message(STATUS "Using GNU gettext.")
     if(LIBINTL_LIBRARY)
@@ -1240,6 +1236,7 @@ endif()
 
 add_subdirectory(Opcodes)
 add_subdirectory(InOut)
+add_subdirectory(Frontends)
 add_subdirectory(po)
 
 # uninstall target

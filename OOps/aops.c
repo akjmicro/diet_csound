@@ -2280,7 +2280,6 @@ int32_t is_NaN(CSOUND *csound, ASSIGN *p)
 	return OK;
 }
 
-
 /* ********COULD BE IMPROVED******** */
 int32_t is_NaNa(CSOUND *csound, ASSIGN *p)
 {
@@ -2291,6 +2290,7 @@ int32_t is_NaNa(CSOUND *csound, ASSIGN *p)
     MYFLT *a = p->a;
     *p->r = FL(0.0);
     for (k=offset; k<early; k++)
+      // *p->r += isnan(a[k]);
       *p->r += _isnan(a[k]);
     return OK;
 }

@@ -26,19 +26,21 @@
              ugens to retrieve info about a sound file */
 
 #include "csoundCore.h"
+#include <sndfile.h>
+
 #include "soundio.h"
 #include "sndinfUG.h"
 #include "pvfileio.h"
 #include "convolve.h"
 
-static int32_t getsndinfo(CSOUND *csound, SNDINFO *p, SFLIB_INFO *hdr, int32_t strin)
+static int32_t getsndinfo(CSOUND *csound, SNDINFO *p, SF_INFO *hdr, int32_t strin)
 {
     char    *sfname, *s, soundiname[1024];
     SNDFILE *sf;
-    SFLIB_INFO sfinfo;
+    SF_INFO sfinfo;
     int32_t     csFileType;
 
-    memset(hdr, 0, sizeof(SFLIB_INFO));
+    memset(hdr, 0, sizeof(SF_INFO));
     /* leap thru std hoops to get the name */
     if (strin)
       strNcpy(soundiname, ((STRINGDAT*)p->ifilno)->data, 1023);
@@ -66,8 +68,8 @@ static int32_t getsndinfo(CSOUND *csound, SNDINFO *p, SFLIB_INFO *hdr, int32_t s
     }
     sfname = s;                         /* & record fullpath filnam */
     csFileType = CSFTYPE_UNKNOWN;
-    memset(&sfinfo, 0, sizeof(SFLIB_INFO));
-    sf = sflib_open(sfname, SFM_READ, &sfinfo);
+    memset(&sfinfo, 0, sizeof(SF_INFO));
+    sf = sf_open(sfname, SFM_READ, &sfinfo);
     if (sf == NULL) {
       /* open failed: maybe analysis or raw file ? */
       if (*(p->irawfiles) == FL(0.0)) {
@@ -75,7 +77,7 @@ static int32_t getsndinfo(CSOUND *csound, SNDINFO *p, SFLIB_INFO *hdr, int32_t s
         return 0;
       }
       /* check for analysis files */
-      memset(hdr, 0, sizeof(SFLIB_INFO));
+      memset(hdr, 0, sizeof(SF_INFO));
       {                                 /* convolve */
         FILE      *f;
         CVSTRUCT  cvdata;
@@ -115,13 +117,13 @@ static int32_t getsndinfo(CSOUND *csound, SNDINFO *p, SFLIB_INFO *hdr, int32_t s
         }
       }
       if (csFileType == CSFTYPE_UNKNOWN) {
-        memset(&sfinfo, 0, sizeof(SFLIB_INFO));
+        memset(&sfinfo, 0, sizeof(SF_INFO));
         sfinfo.samplerate = (int32_t)(csound->esr + FL(0.5));
         sfinfo.channels = 1;
         sfinfo.format = (int32_t)FORMAT2SF(csound->oparms->outformat)
                         | (int32_t)TYPE2SF(TYP_RAW);
         /* try again */
-        sf = sflib_open(sfname, SFM_READ, &sfinfo);
+        sf = sf_open(sfname, SFM_READ, &sfinfo);
       }
     }
     if (UNLIKELY(sf == NULL && csFileType == CSFTYPE_UNKNOWN)) {
@@ -129,8 +131,8 @@ static int32_t getsndinfo(CSOUND *csound, SNDINFO *p, SFLIB_INFO *hdr, int32_t s
     }
     if (sf != NULL) {
       csFileType = sftype2csfiletype(sfinfo.format);
-      memcpy(hdr, &sfinfo, sizeof(SFLIB_INFO));
-      sflib_close(sf);
+      memcpy(hdr, &sfinfo, sizeof(SF_INFO));
+      sf_close(sf);
     }
     /* FIXME: PVOC_OpenFile has already notified since it calls
        FileOpen2(), even if the file was not a PVOC file. */
@@ -142,7 +144,7 @@ static int32_t getsndinfo(CSOUND *csound, SNDINFO *p, SFLIB_INFO *hdr, int32_t s
 
 int32_t filelen(CSOUND *csound, SNDINFO *p)
 {
-    SFLIB_INFO hdr;
+    SF_INFO hdr;
 
     if (getsndinfo(csound, p, &hdr, 0))
       *(p->r1) = (MYFLT)((int32_t)hdr.frames) / (MYFLT)hdr.samplerate;
@@ -154,7 +156,7 @@ int32_t filelen(CSOUND *csound, SNDINFO *p)
 
 int32_t filelen_S(CSOUND *csound, SNDINFO *p)
 {
-    SFLIB_INFO hdr;
+    SF_INFO hdr;
 
     if (getsndinfo(csound, p, &hdr, 1))
       *(p->r1) = (MYFLT)((int32_t)hdr.frames) / (MYFLT)hdr.samplerate;
@@ -166,7 +168,7 @@ int32_t filelen_S(CSOUND *csound, SNDINFO *p)
 
 int32_t filenchnls_S(CSOUND *csound, SNDINFO *p)
 {
-    SFLIB_INFO hdr;
+    SF_INFO hdr;
 
     getsndinfo(csound, p, &hdr, 1);
     *(p->r1) = (MYFLT)hdr.channels;
@@ -176,7 +178,7 @@ int32_t filenchnls_S(CSOUND *csound, SNDINFO *p)
 
 int32_t filesr_S(CSOUND *csound, SNDINFO *p)
 {
-    SFLIB_INFO hdr;
+    SF_INFO hdr;
 
     getsndinfo(csound, p, &hdr, 1);
     *(p->r1) = (MYFLT)hdr.samplerate;
@@ -186,11 +188,11 @@ int32_t filesr_S(CSOUND *csound, SNDINFO *p)
 
 int32_t filebit_S(CSOUND *csound, SNDINFO *p)
 {
-    SFLIB_INFO hdr;
+    SF_INFO hdr;
     int32_t bits, format;
 
     getsndinfo(csound, p, &hdr, 1);
-    format = TYPE2ENC(hdr.format);
+    format = hdr.format &  SF_FORMAT_SUBMASK;
     if (format < 5)
       bits = format*8 ;
     else if (format == 5) bits = 8;
@@ -206,7 +208,7 @@ int32_t filebit_S(CSOUND *csound, SNDINFO *p)
 
 int32_t filenchnls(CSOUND *csound, SNDINFO *p)
 {
-    SFLIB_INFO hdr;
+    SF_INFO hdr;
 
     getsndinfo(csound, p, &hdr, 0);
     *(p->r1) = (MYFLT)hdr.channels;
@@ -216,7 +218,7 @@ int32_t filenchnls(CSOUND *csound, SNDINFO *p)
 
 int32_t filesr(CSOUND *csound, SNDINFO *p)
 {
-    SFLIB_INFO hdr;
+    SF_INFO hdr;
 
     getsndinfo(csound, p, &hdr, 0);
     *(p->r1) = (MYFLT)hdr.samplerate;
@@ -226,11 +228,11 @@ int32_t filesr(CSOUND *csound, SNDINFO *p)
 
 int32_t filebit(CSOUND *csound, SNDINFO *p)
 {
-    SFLIB_INFO hdr;
+    SF_INFO hdr;
     int32_t bits, format;
 
     getsndinfo(csound, p, &hdr, 0);
-    format = TYPE2ENC(hdr.format);
+    format = hdr.format &  SF_FORMAT_SUBMASK;
     if (format < 5)
       bits = format*8 ;
     else if (format == 5) bits = 8;
@@ -257,7 +259,7 @@ int32_t filepeak_(CSOUND *csound, SNDINFOPEAK *p, char *soundiname)
     SNDFILE *sf;
     double  peakVal = -1.0;
     int32_t     fmt, typ;
-    SFLIB_INFO sfinfo;
+    SF_INFO sfinfo;
 
     sfname = soundiname;
     if (strcmp(sfname, "-i") == 0) {        /* get info on the -i    */
@@ -266,20 +268,20 @@ int32_t filepeak_(CSOUND *csound, SNDINFOPEAK *p, char *soundiname)
         return csound->InitError(csound,
                     Str("no infile specified in the commandline"));
     }
-    memset(&sfinfo, 0, sizeof(SFLIB_INFO));    /* open with full dir paths */
+    memset(&sfinfo, 0, sizeof(SF_INFO));    /* open with full dir paths */
     fd = csound->FileOpen2(csound, &sf, CSFILE_SND_R, sfname, &sfinfo,
                              "SFDIR;SSDIR", CSFTYPE_UNKNOWN_AUDIO, 0);
     if (UNLIKELY(fd == NULL)) {
       /* RWD 5:2001 better to exit in this situation ! */
       return csound->InitError(csound, Str("diskinfo cannot open %s: %s"),
-                               sfname, Str(sflib_strerror(NULL)));
+                               sfname, Str(sf_strerror(NULL)));
     }
     if (channel <= 0) {
-      if (sflib_command(sf, SFC_GET_SIGNAL_MAX, &peakVal, sizeof(double))
-          == SFLIB_FALSE) {
+      if (sf_command(sf, SFC_GET_SIGNAL_MAX, &peakVal, sizeof(double))
+          == SF_FALSE) {
         csound->Warning(csound, Str("%s: no PEAK chunk was found, scanning "
                                     "file for maximum amplitude"), sfname);
-        if (sflib_command(sf, SFC_CALC_NORM_SIGNAL_MAX,
+        if (sf_command(sf, SFC_CALC_NORM_SIGNAL_MAX,
                        &peakVal, sizeof(double)) != 0)
           peakVal = -1.0;
       }
@@ -293,10 +295,10 @@ int32_t filepeak_(CSOUND *csound, SNDINFOPEAK *p, char *soundiname)
                                 "of channels in file"));
       nBytes = sizeof(double)* sfinfo.channels;
       peaks = (double*)csound->Malloc(csound, nBytes);
-      if (sflib_command(sf, SFC_GET_MAX_ALL_CHANNELS, peaks, nBytes) == SFLIB_FALSE) {
+      if (sf_command(sf, SFC_GET_MAX_ALL_CHANNELS, peaks, nBytes) == SF_FALSE) {
         csound->Warning(csound, Str("%s: no PEAK chunk was found, scanning "
                                     "file for maximum amplitude"), sfname);
-        if (sflib_command(sf, SFC_CALC_NORM_MAX_ALL_CHANNELS, peaks, nBytes) == 0)
+        if (sf_command(sf, SFC_CALC_NORM_MAX_ALL_CHANNELS, peaks, nBytes) == 0)
           peakVal = peaks[channel - 1];
       }
       csound->Free(csound, peaks);
@@ -304,10 +306,10 @@ int32_t filepeak_(CSOUND *csound, SNDINFOPEAK *p, char *soundiname)
     if (UNLIKELY(peakVal < 0.0))
       return csound->InitError(csound, Str("filepeak: error getting peak value"));
     /* scale output consistently with soundin opcode (see diskin2.c) */
-    fmt = TYPE2ENC(sfinfo.format);
-    typ = SF2TYPE(sfinfo.format);
-    if ((fmt != AE_FLOAT && fmt != AE_DOUBLE) ||
-        (typ == TYP_WAV || typ == TYP_W64 || typ == TYP_AIFF))
+    fmt = sfinfo.format & SF_FORMAT_SUBMASK;
+    typ = sfinfo.format & SF_FORMAT_TYPEMASK;
+    if ((fmt != SF_FORMAT_FLOAT && fmt != SF_FORMAT_DOUBLE) ||
+        (typ == SF_FORMAT_WAV || typ == SF_FORMAT_W64 || typ == SF_FORMAT_AIFF))
       *p->r1 = (MYFLT)(peakVal * (double)csound->e0dbfs);
     else
       *p->r1 = (MYFLT)peakVal;

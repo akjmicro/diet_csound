@@ -78,7 +78,7 @@
  F       multiple args (f-rate)#
 */
 
-/* inargs and outargs may also be arrays, e.g. "a[b]" is an array of
+/* inargs and outargs may also be arrays, e.g. "a[]" is an array of
    arate vectors. Then for polymorphic opcode entries, "opcode.a" is
    for arate vectors, and "opcode.A" is for arrays of arate vectors.
 */
@@ -89,9 +89,8 @@ OENTRY opcodlst_1[] = {
   { "instr",  0,    0,      0,      "",     "",   NULL, NULL, NULL, NULL },
   { "endin",  0,    0,      0,      "",     "",   NULL, NULL, NULL, NULL },
   /* IV - Sep 8 2002 */
-  { "opcode",  0,    0,      0,      "",     "",   NULL, NULL, NULL, NULL },
-  { "endop",   0,    0,      0,      "",     "",   NULL, NULL, NULL, NULL },
-  { "declare", 0,    0,      0,      "",     "",   NULL, NULL, NULL, NULL },
+  { "opcode", 0,    0,      0,      "",     "",   NULL, NULL, NULL, NULL },
+  { "endop",  0,    0,      0,      "",     "",   NULL, NULL, NULL, NULL },
   { "$label", S(LBLBLK),  0,0,      "",     "",   NULL, NULL, NULL, NULL },
   { "pset",   S(PVSET),   0,0,      "",     "m",  NULL, NULL, NULL, NULL },
 
@@ -132,13 +131,11 @@ OENTRY opcodlst_1[] = {
   { "midglobal",S(MIDGLOBAL),0,1,   "",     "Sm", midglobal, NULL, NULL, NULL},
   { "ihold",  S(LINK),0,    1,      "",     "",     ihold, NULL, NULL, NULL  },
   { "turnoff",S(LINK),0,    2,      "",     "",     NULL,   turnoff, NULL, NULL },
-  /* VL: 10.2.22 this was thread 1, but with parser3 we need to make string assignment on threads 1 & 2 */
-  {  "=.S",   S(STRCPY_OP),0,   3,  "S",    "S",
-     (SUBR) strcpy_opcode_S, (SUBR) strassign_k, (SUBR) NULL, NULL    },
-  /* VL: 11.2.22 this was thread 2, but with an update count, we need to be initialised */
-  {  "#=.S",   S(STRCPY_OP),0,   3,  "S",    "S",
-     (SUBR) strcpy_opcode_S, (SUBR) strassign_k, (SUBR) NULL, NULL    },
-  {  "=.T",   S(STRCPY_OP),0,   1,  "S",    "i",
+  {  "=.S",   S(STRCPY_OP),0,   1,  "S",    "S",
+     (SUBR) strcpy_opcode_S, NULL, (SUBR) NULL, NULL    },
+  {  "#=.S",   S(STRCPY_OP),0,   2,  "S",    "S",
+     NULL, (SUBR) strcpy_opcode_S, (SUBR) NULL, NULL    },
+  {  "=.T",   S(STRGET_OP),0,   1,  "S",    "i",
      (SUBR) strcpy_opcode_p, (SUBR) NULL, (SUBR) NULL, NULL                 },
   { "=.r",    S(ASSIGN),0,  1,      "r",    "i",    rassign, NULL, NULL, NULL },
   { "=.i",    S(ASSIGNM),0, 1,      "IIIIIIIIIIIIIIIIIIIIIIII", "m",
@@ -484,7 +481,7 @@ OENTRY opcodlst_1[] = {
   { "randi.k",  S(RANDI),0, 3,      "k",    "xxvoo", riset, krandi    },
   { "randc",  S(RANDC),0,   3,      "a",    "xxvoo", rcset, randc     },
   { "randc.k",  S(RANDC),0, 3,      "k",    "xxvoo", rcset, krandc    },
-  { "port",   S(PORT),0,    3,      "k",    "kio",  porset, port      },
+  { "port",   S(PORT),0,    3,      "k",    "kio",  porset, port            },
   { "tone.k", S(TONE),0,    3,      "a",    "ako",  tonset,   tone    },
   { "tonex.k",S(TONEX),0,   3,      "a",    "akoo", tonsetx,  tonex   },
   { "atone.k",  S(TONE),0,  3,      "a",    "ako",  tonset,   atone   },
@@ -779,17 +776,16 @@ OENTRY opcodlst_1[] = {
   { "prints.i",S(PRINTS),0,   1,   "",   "iN",   (SUBR)printsset, NULL, NULL },
   { "printk2", S(PRINTK2), WR, 3, "",   "koo",
     (SUBR)printk2set, (SUBR)printk2, NULL },
-  { "portk",  S(PORT),0,    3, "k",     "kko",  (SUBR)porset,  (SUBR)kport, NULL },
-  { "tonek",  S(TONE),0,    3, "k",     "kko",  (SUBR)tonset,  (SUBR)ktone, NULL },
-  { "atonek", S(TONE),0,    3, "k",     "kko",  (SUBR)tonset,  (SUBR)katone, NULL},
-  { "resonk", S(RESON),0,   3, "k",     "kkkpo",(SUBR)rsnset,  (SUBR)kreson, NULL},
-  { "aresonk",S(RESON),0,   3, "k",     "kkkpo",(SUBR)rsnset,  (SUBR)kreson, NULL},
-  { "aresonk",S(RESON),0,   3, "k",     "kkkpo",(SUBR)rsnset,  (SUBR)kareson, NULL},
+  { "portk",  S(KPORT),0,   3, "k",     "kko",  (SUBR)kporset, (SUBR)kport, NULL },
+  { "tonek",  S(KTONE),0,   3, "k",     "kko",  (SUBR)ktonset, (SUBR)ktone, NULL },
+  { "atonek", S(KTONE),0,   3, "k",     "kko",  (SUBR)ktonset, (SUBR)katone, NULL},
+  { "resonk", S(KRESON),0,  3, "k",     "kkkpo",(SUBR)krsnset, (SUBR)kreson, NULL},
+  { "aresonk",S(KRESON),0,  3, "k",     "kkkpo",(SUBR)krsnset, (SUBR)kareson, NULL},
   { "limit.i", S(LIMIT),0,  1, "i",     "iii",  (SUBR)klimit,  NULL,    NULL      },
   { "limit.k",  S(LIMIT),0, 2, "k",     "kkk",  NULL,          (SUBR)klimit, NULL },
   { "limit.a",  S(LIMIT),0, 2, "a",     "akk",  NULL,  (SUBR)limit },
   { "prealloc", S(AOP),0,   1, "",      "iio",  (SUBR)prealloc, NULL, NULL  },
-  { "prealloc.S", S(AOP),0, 1, "",      "Sio",  (SUBR)prealloc_S, NULL, NULL  },
+   { "prealloc", S(AOP),0,   1, "",      "Sio",  (SUBR)prealloc_S, NULL, NULL  },
   /* opcode   dspace      thread  outarg  inargs  isub    ksub    asub    */
   { "inh",    S(INH),0,     2,      "aaaaaa","",    NULL,   inh     },
   { "ino",    S(INO),0,     2,      "aaaaaaaa","",  NULL,   ino     },
@@ -1037,7 +1033,7 @@ OENTRY opcodlst_1[] = {
      (SUBR) strcat_opcode, (SUBR) strcat_opcode, NULL             },
   {  "strcmp",   S(STRCMP_OP),0,   1,  "i",    "SS",
      (SUBR) strcmp_opcode, NULL, NULL                      },
-  {  "strcmpk",  S(STRCMP_OP),0,   3,  "k",    "SS",
+  {  "strcmpk",  S(STRCAT_OP),0,   3,  "k",    "SS",
      (SUBR) strcmp_opcode, (SUBR) strcmp_opcode, NULL             },
   {  "sprintf",  S(SPRINTF_OP),0,  1,  "S",    "STN",
      (SUBR) sprintf_opcode, NULL, NULL                     },
@@ -1225,9 +1221,6 @@ OENTRY opcodlst_1[] = {
   { "readscore",  S(COMPILE), 0, 1, "i", "S",  (SUBR) read_score_i, NULL, NULL },
   { "return",  S(RETVAL), 0, 1, "", "i",  (SUBR) retval_i, NULL, NULL },
   /* ----------------------------------------------------------------------- */
-  // VL: 9.3.22 this is causing a problem in parsing arrays
-  // I am modifying it to accept only i-time inputs
-  { "=.generic", S(ASSIGN), 0,1, ".", ".", (SUBR)copyVarGeneric, NULL, NULL},
   { "monitor",  sizeof(MONITOR_OPCODE), IB, 3,  "mmmmmmmmmmmmmmmmmmmmmmmm", "",
     (SUBR) monitor_opcode_init, (SUBR) notinit_opcode_stub,  NULL },
   { "outrg", S(OUTRANGE), IR,3, "", "ky",

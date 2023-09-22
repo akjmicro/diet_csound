@@ -3083,11 +3083,12 @@ static OENTRY emugens_localops[] = {
       (SUBR)cmp2array1_init, (SUBR)cmp2array1_k },
     { "cmp", S(Cmp2_array1), 0, 1, "i[]", "iSi[]Si", (SUBR)cmp2array1_i},
 
-
+    /*
     { "##or",  S(BINOP_AAA), 0, 3, "k[]", "k[]k[]",
       (SUBR)array_binop_init, (SUBR)array_or},
     { "##and", S(BINOP_AAA), 0, 3, "k[]", "k[]k[]",
       (SUBR)array_binop_init, (SUBR)array_and},
+    */
     { "reshapearray", S(ARRAYRESHAPE), 0, 1, "", ".[]io", (SUBR)arrayreshape},
 
     { "ftslicei", S(TABSLICE), TB, 1, "", "iioop", (SUBR)tabslice_i },

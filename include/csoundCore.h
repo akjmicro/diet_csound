@@ -47,7 +47,6 @@
 #include "csound_data_structures.h"
 #include "csound_standard_types.h"
 #include "pools.h"
-#include "soundfile.h"
 
 #ifndef CSOUND_CSDL_H
 /* VL not sure if we need to check for SSE */
@@ -96,8 +95,6 @@ typedef struct {
 
 #define OK        (0)
 #define NOTOK     (-1)
-
-#define DEFAULT_STRING_SIZE 64
 
 #define CSFILE_FD_R     1
 #define CSFILE_FD_W     2
@@ -273,7 +270,6 @@ typedef struct CORFIL {
     int     echo;
     MYFLT   limiter;
     float   sr_default, kr_default;
-    int     mp3_mode;
   } OPARMS;
 
   typedef struct arglst {
@@ -285,7 +281,6 @@ typedef struct CORFIL {
     int type;
     void* argPtr;
     int index;
-    char* structPath;
     struct arg* next;
   } ARG;
 //  typedef struct argoffs {
@@ -320,7 +315,7 @@ typedef struct CORFIL {
     unsigned int    inArgCount;
     ARG             *outArgs;
     unsigned        int outArgCount;
-//    char            intype;         /* Type of first input argument (g,k,a,w etc) */
+    char            intype;         /* Type of first input argument (g,k,a,w etc) */
     char            pftype;         /* Type of output argument (k,a etc) */
   } TEXT;
 
@@ -422,12 +417,9 @@ typedef struct CORFIL {
       AUXCH   aux;
    } TABDAT;
 
-  #define MAX_STRINGDAT_SIZE 0xFFFFFFFF
-  
   typedef struct {
     char *data;
-    size_t size;
-    int64_t timestamp;    /*  VL: Feb 22 starting in 7.0 we have a timestamp */
+    int size;
   } STRINGDAT;
 
   typedef struct monblk {
@@ -765,7 +757,7 @@ typedef struct CORFIL {
     /** amplitude scale factor        */
     double          scaleFac;
     /** interleaved sample data       */
-    MYFLT           data[1];
+    float           data[1];
   } SNDMEMFILE;
 
   typedef struct pvx_memfile_ {
@@ -891,12 +883,6 @@ typedef struct CORFIL {
  * and nodebug kperf functions */
   int kperf_nodebug(CSOUND *csound);
   int kperf_debug(CSOUND *csound);
-
-  /*
-    check if code is running at init time. 
-    result may not be valid in realtime mode
-   */  
-int csoundIsInitThread(CSOUND *csound);  
 
 #endif  /* __BUILDING_LIBCSOUND */
 
@@ -1424,20 +1410,11 @@ typedef struct _message_queue_t_ {
     MYFLT* (*CepsLP)(CSOUND *, MYFLT *, MYFLT *, int, int);
     MYFLT (*LPrms)(CSOUND *, void *);
     void *(*CreateThread2)(uintptr_t (*threadRoutine)(void *), unsigned int, void *userdata);
-    CS_HASH_TABLE *(*CreateHashTable)(CSOUND *);
-    void *(*GetHashTableValue)(CSOUND *, CS_HASH_TABLE *, char *);
-    void (*SetHashTableValue)(CSOUND *, CS_HASH_TABLE *, char *, void *);
-    void (*RemoveHashTableKey)(CSOUND *, CS_HASH_TABLE *, char *);
-    void (*DestroyHashTable)(CSOUND *, CS_HASH_TABLE *);
-    char *(*GetHashTableKey)(CSOUND *, CS_HASH_TABLE *, char *);
-    CONS_CELL *(*GetHashTableKeys)(CSOUND *, CS_HASH_TABLE *);
-    CONS_CELL *(*GetHashTableValues)(CSOUND *, CS_HASH_TABLE *);
-    int (*PeekCircularBuffer)(CSOUND *csound, void *p, void *out, int items);
     /**@}*/
     /** @name Placeholders
         To allow the API to grow while maintining backward binary compatibility. */
     /**@{ */
-    SUBR dummyfn_2[13];
+    SUBR dummyfn_2[22];
     /**@}*/
 #ifdef __BUILDING_LIBCSOUND
     /* ------- private data (not to be used by hosts or externals) ------- */
@@ -1694,8 +1671,8 @@ typedef struct _message_queue_t_ {
       EVENT   *lsect;
     } musmonStatics;
     struct libsndStatics__ {
-      void       *outfile;
-      void       *infile;
+      SNDFILE       *outfile;
+      SNDFILE       *infile;
       char          *sfoutname;           /* soundout filename            */
       MYFLT         *inbuf;
       MYFLT         *outbuf;              /* contin sndio buffers         */
@@ -1813,6 +1790,7 @@ typedef struct _message_queue_t_ {
     int           scoLineOffset; /* 1 less than 1st score line in the CSD */
     char*         csdname;
   /* original CSD name; do not free() */
+    int           parserUdoflag;
     int           parserNamedInstrFlag;
     int           tran_nchnlsi;
     int           scnt;         /* Count of strings */
@@ -1833,6 +1811,7 @@ typedef struct _message_queue_t_ {
     int (*kperf)(CSOUND *); /* kperf function pointer, to switch between debug
                                and nodebug function */
     int           score_parser;
+    CS_HASH_TABLE* symbtab;
     int           print_version;
     int           inZero;       /* flag compilation of instr0 */
     struct _message_queue **msg_queue;
@@ -1859,6 +1838,7 @@ typedef struct _message_queue_t_ {
     int  mode;
     char *opcodedir;
     char *score_srt;
+    int mp3_mode;
     /*struct CSOUND_ **self;*/
     /**@}*/
 #endif  /* __BUILDING_LIBCSOUND */

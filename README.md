@@ -1,9 +1,25 @@
-# CSOUND
+# DIET CSOUND
 Version 7.0.0 (beta)
 
 ![Build Status](https://github.com/csound/csound/actions/workflows/csound_builds.yml/badge.svg?branch=develop)
 <!--- ![Coverity Status](https://scan.coverity.com/projects/1822/badge.svg) --->
 A sound and music computing system.
+
+`Diet Csound` is a fork of Csound, brought to you by Aaron Krister Johnson.
+
+The goal was to strip down to a curated set of what I deem "essential" opcodes,
+in order to make the system smaller/leaner/cleaner. Along the way, when I see
+code that could be put in a better organization, or prettified, I do!
+
+What you might consider "essential" might vary from what I do, (and myself
+at different times) but hopefully, the system starting from a smaller place
+would be a good thing for you all as well, and maybe you can customize your
+system as I do.
+
+As time goes on, I'll provide customization instructions that go deeper into
+how you can hack your system.
+
+# Legalese
 
 Csound is copyright (c) 1991-2020 The Csound Developers, see CONTRIBUTORS
 

@@ -71,5 +71,5 @@ endif()
 
 ## deprecated opcodes ##
 if(BUILD_DEPRECATED_OPCODES)
-    make_plugin(deprecated deprecated.c)
+    #make_plugin(deprecated deprecated.c)
 endif()

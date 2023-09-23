@@ -26,4 +26,3 @@ if(USE_GETTEXT)
     compile_po(it italian.po)
     compile_po(ru russian.po)
 endif()
-

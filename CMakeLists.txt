@@ -684,7 +684,7 @@ set_source_files_properties(Top/csound.c PROPERTIES
 
 # The csound library
 set(libcsound_SRCS
-   Top/csound.c
+    Top/csound.c
     Engine/auxfd.c
     Engine/cfgvar.c
     Engine/corfiles.c
@@ -759,23 +759,24 @@ set(libcsound_SRCS
     Opcodes/butter.c
     Opcodes/compress.c
     Opcodes/dcblockr.c
+    Opcodes/emugens/emugens.c
+    Opcodes/emugens/scugens.c
     Opcodes/eqfil.c
     Opcodes/fout.c
     Opcodes/ftgen.c
     Opcodes/logic_ops.c
-    Opcodes/midiops2.c
-    Opcodes/pinker.c
-    Opcodes/emugens/emugens.c
-    Opcodes/emugens/scugens.c
-    Opcodes/reverbsc.c
-    Opcodes/streson.c
-    Opcodes/vco2.c
-    Opcodes/noise.c
-    Opcodes/tl/sc_noise.c
-    Opcodes/seqtime.c
     Opcodes/metro.c
-    Opcodes/ugsc.c
+    Opcodes/midiops2.c
+    Opcodes/noise.c
+    Opcodes/pinker.c
+    Opcodes/reverbsc.c
+    Opcodes/seqtime.c
+    Opcodes/sndloop.c
+    Opcodes/streson.c
+    Opcodes/tl/sc_noise.c
     Opcodes/uggab.c
+    Opcodes/ugsc.c
+    Opcodes/vco2.c
     Top/argdecode.c
     Top/csdebug.c
     Top/cscore_internal.c

@@ -1157,24 +1157,24 @@ extern int32_t biquad_localops_init(CSOUND *, void *);
 extern int32_t butter_localops_init(CSOUND *, void *);
 extern int32_t compress_localops_init(CSOUND *, void *);
 extern int32_t dcblock_localops_init(CSOUND *, void *);
+extern int32_t emugens_localops_init(CSOUND *, void *);
 extern int32_t eqfil_localops_init(CSOUND *, void *);
 extern int32_t fout_localops_init(CSOUND *, void *);
 extern int32_t ftgen_localops_init(CSOUND *, void *);
 extern int32_t logic_localops_init(CSOUND *, void *);
+extern int32_t metro_localops_init(CSOUND *, void *);
 extern int32_t midiops2_localops_init(CSOUND *, void *);
+extern int32_t noise_localops_init(CSOUND *, void *);
 extern int32_t pinker_localops_init(CSOUND *, void *);
-extern int32_t scugens_localops_init(CSOUND *, void *);
-extern int32_t emugens_localops_init(CSOUND *, void *);
 extern int32_t reverbsc_localops_init(CSOUND *, void *);
+extern int32_t scnoise_localops_init(CSOUND *, void *);
+extern int32_t scugens_localops_init(CSOUND *, void *);
+extern int32_t seqtime_localops_init(CSOUND *, void *);
+extern int32_t sndloop_localops_init(CSOUND *, void *);
 extern int32_t streson_localops_init(CSOUND *, void *);
 extern int32_t vco2_localops_init(CSOUND *, void *);
-extern int32_t noise_localops_init(CSOUND *, void *);
-extern int32_t scnoise_localops_init(CSOUND *, void *);
-extern int32_t seqtime_localops_init(CSOUND *, void *);
-extern int32_t metro_localops_init(CSOUND *, void *);
-extern int32_t ugsc_localops_init(CSOUND *, void *);
 extern int32_t uggab_localops_init(CSOUND *, void *);
-
+extern int32_t ugsc_localops_init(CSOUND *, void *);
 
 const INITFN staticmodules[] = {
     active_localops_init,
@@ -1183,23 +1183,24 @@ const INITFN staticmodules[] = {
     butter_localops_init,
     compress_localops_init,
     dcblock_localops_init,
+    emugens_localops_init,
     eqfil_localops_init,
     fout_localops_init,
     ftgen_localops_init,
     logic_localops_init,
+    metro_localops_init,
     midiops2_localops_init,
+    noise_localops_init,
     pinker_localops_init,
-    scugens_localops_init,
-    emugens_localops_init,
     reverbsc_localops_init,
+    scnoise_localops_init,
+    scugens_localops_init,
+    seqtime_localops_init,
+    sndloop_localops_init,
     streson_localops_init,
     vco2_localops_init,
-    noise_localops_init,
-    scnoise_localops_init,
-    seqtime_localops_init,
-    metro_localops_init,
-    ugsc_localops_init,
     uggab_localops_init,
+    ugsc_localops_init,
     NULL
 };
 
@@ -1226,7 +1227,6 @@ CS_NOINLINE int csoundInitStaticModules(CSOUND *csound)
 
     for (i=0; staticmodules[i]!=NULL; i++) {
       length = (staticmodules[i])(csound, &opcodlst_n);
-
       if (UNLIKELY(length <= 0L)) return CSOUND_ERROR;
       length /= (int32_t) sizeof(OENTRY);
       if (length) {

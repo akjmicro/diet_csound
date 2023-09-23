@@ -1333,27 +1333,13 @@ static int32_t pvsmorph_process(CSOUND *csound, pvsmorph *p)
                              Str("pvsmorph: not initialised\n"));
 }
 
-static OENTRY localops[] =
-  {
-   {"sndloop", sizeof(sndloop),0, 3,
-    "ak", "akkii", (SUBR)sndloop_init, (SUBR)sndloop_process},
-   {"flooper", sizeof(flooper), TR, 3,
-    "mm", "kkiiii", (SUBR)flooper_init, (SUBR)flooper_process},
-   {"pvsarp", sizeof(pvsarp), 0,3,
-    "f", "fkkk", (SUBR)pvsarp_init, (SUBR)pvsarp_process},
-   {"pvsvoc", sizeof(pvsvoc), 0,3,
-    "f", "ffkkO", (SUBR)pvsvoc_init, (SUBR)pvsvoc_process},
-   {"flooper2", sizeof(flooper2), TR, 3,
-    "mm", "kkkkkiooooO", (SUBR)flooper2_init, (SUBR)flooper2_process},
-  /* {"flooper3", sizeof(flooper3), TR, 3,
-     "a", "kkkkkioooo", (SUBR)flooper3_init, (SUBR)flooper3_process},*/
-   {"pvsmorph", sizeof(pvsvoc), 0,3,
-    "f", "ffkk", (SUBR)pvsmorph_init, (SUBR)pvsmorph_process}
+static OENTRY sndloop_localops[] = {
+    {"sndloop",  sizeof(sndloop),  0,  3, "ak", "akkii",       (SUBR)sndloop_init,  (SUBR)sndloop_process},
+    {"flooper",  sizeof(flooper),  TR, 3, "mm", "kkiiii",      (SUBR)flooper_init,  (SUBR)flooper_process},
+    {"pvsarp",   sizeof(pvsarp),   0,  3, "f",  "fkkk",        (SUBR)pvsarp_init,   (SUBR)pvsarp_process},
+    {"pvsvoc",   sizeof(pvsvoc),   0,  3, "f",  "ffkkO",       (SUBR)pvsvoc_init,   (SUBR)pvsvoc_process},
+    {"flooper2", sizeof(flooper2), TR, 3, "mm", "kkkkkiooooO", (SUBR)flooper2_init, (SUBR)flooper2_process},
+    {"pvsmorph", sizeof(pvsvoc),   0,  3, "f",  "ffkk",        (SUBR)pvsmorph_init, (SUBR)pvsmorph_process}
 };
 
-int32_t sndloop_init_(CSOUND *csound)
-{
-  return csound->AppendOpcodes(csound, &(localops[0]),
-                               (int32_t
-                                ) (sizeof(localops) / sizeof(OENTRY)));
-}
+LINKAGE_BUILTIN(sndloop_localops)

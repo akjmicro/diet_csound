@@ -809,10 +809,8 @@ endif()
 if(INIT_STATIC_MODULES)
     set(static_modules_SRCS
         Top/init_static_modules.c
-        Opcodes/doppler.cpp
         Opcodes/tl/fractalnoise.cpp
-        Opcodes/mixer.cpp
-        Opcodes/signalflowgraph.cpp)
+    )
     set_source_files_properties(${static_modules_SRCS} PROPERTIES COMPILE_FLAGS -DINIT_STATIC_MODULES)
     list(APPEND libcsound_SRCS ${static_modules_SRCS})
     message(STATUS "Building static modules")

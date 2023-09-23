@@ -799,101 +799,6 @@ static int32_t vco(CSOUND *csound, VCO *p)
     return csound->PerfError(csound, &(p->h), Str("vco: not initialised"));
 }
 
-/***************************************************************************/
-/* This is a simplified model of a planet orbiting in a binary star system */
-/* Coded by Hans Mikelson December 1998                                    */
-/***************************************************************************/
-
-static int32_t planetset(CSOUND *csound, PLANET *p)
-{
-     IGN(csound);
-    if (*p->iskip==FL(0.0)) {
-      p->x  = *p->xval;  p->y  = *p->yval;  p->z  = *p->zval;
-      p->vx = *p->vxval; p->vy = *p->vyval; p->vz = *p->vzval;
-      p->ax = FL(0.0); p->ay = FL(0.0); p->az = FL(0.0);
-      p->hstep = *p->delta;
-      p->friction = FL(1.0) - *p->fric/FL(10000.0);
-    }
-    return OK;
-} /* end planetset(p) */
-
-/* Planet orbiting in a binary star system coded by Hans Mikelson */
-
-static int32_t planet(CSOUND *csound, PLANET *p)
-{
-     IGN(csound);
-    MYFLT *outx, *outy, *outz;
-    MYFLT   sqradius1, sqradius2, radius1, radius2, fric;
-    MYFLT xxpyy, dz1, dz2, mass1, mass2, msqror1, msqror2;
-    uint32_t offset = p->h.insdshead->ksmps_offset;
-    uint32_t early  = p->h.insdshead->ksmps_no_end;
-    uint32_t n, nsmps = CS_KSMPS;
-
-    fric = p->friction;
-
-    outx = p->outx;
-    outy = p->outy;
-    outz = p->outz;
-
-    p->s1z = *p->sep*FL(0.5);
-    p->s2z = -p->s1z;
-
-    mass1 = *p->mass1;
-    mass2 = *p->mass2;
-
-    if (UNLIKELY(offset)) {
-      memset(outx, '\0', offset*sizeof(MYFLT));
-      memset(outy, '\0', offset*sizeof(MYFLT));
-      memset(outz, '\0', offset*sizeof(MYFLT));
-    }
-    if (UNLIKELY(early)) {
-      nsmps -= early;
-      memset(&outx[nsmps], '\0', early*sizeof(MYFLT));
-      memset(&outy[nsmps], '\0', early*sizeof(MYFLT));
-      memset(&outz[nsmps], '\0', early*sizeof(MYFLT));
-    }
-
-    for (n=offset; n<nsmps; n++) {
-      xxpyy = p->x * p->x + p->y * p->y;
-      dz1 = p->s1z - p->z;
-
-      /* Calculate Acceleration */
-      sqradius1 = xxpyy + dz1 * dz1 + FL(1.0);
-      radius1 = SQRT(sqradius1);
-      msqror1 = mass1/sqradius1/radius1;
-
-      p->ax = msqror1 * -p->x;
-      p->ay = msqror1 * -p->y;
-      p->az = msqror1 * dz1;
-
-      dz2 = p->s2z - p->z;
-
-      /* Calculate Acceleration */
-      sqradius2 = xxpyy + dz2 * dz2 + FL(1.0);
-      radius2 = SQRT(sqradius2);
-      msqror2 = mass2/sqradius2/radius2;
-
-      p->ax += msqror2 * -p->x;
-      p->ay += msqror2 * -p->y;
-      p->az += msqror2 * dz2;
-
-      /* Update Velocity */
-      p->vx = fric * p->vx + p->hstep * p->ax;
-      p->vy = fric * p->vy + p->hstep * p->ay;
-      p->vz = fric * p->vz + p->hstep * p->az;
-
-      /* Update Position */
-      p->x += p->hstep * p->vx;
-      p->y += p->hstep * p->vy;
-      p->z += p->hstep * p->vz;
-
-      /* Output the results */
-      outx[n] = p->x;
-      outy[n] = p->y;
-      outz[n] = p->z;
-    }
-    return OK;
-}
 
 /* ************************************************** */
 /* ******** Parametric EQ *************************** */
@@ -1191,78 +1096,6 @@ static int32_t nestedap(CSOUND *csound, NESTEDAP *p)
  err1:
  return csound->PerfError(csound, &(p->h),
                              Str("delay: not initialised"));
-}
-
-/***************************************************************************/
-/* The Lorenz System                                                       */
-/* Coded by Hans Mikelson Jauarary 1999                                    */
-/***************************************************************************/
-
-static int32_t lorenzset(CSOUND *csound, LORENZ *p)
-{
-   IGN(csound);
-    if (*p->iskip==FL(0.0)) {
-      p->valx = *p->inx; p->valy = *p->iny; p->valz = *p->inz;
-    }
-    return OK;
-}
-
-/* Lorenz System coded by Hans Mikelson */
-
-static int32_t lorenz(CSOUND *csound, LORENZ *p)
-{
-    IGN(csound);
-    MYFLT   *outx, *outy, *outz;
-    MYFLT   x, y, z, xx, yy, s, r, b, hstep;
-    uint32_t offset = p->h.insdshead->ksmps_offset;
-    uint32_t early  = p->h.insdshead->ksmps_no_end;
-    uint32_t n, nsmps = CS_KSMPS;
-    int32    skip;
-
-    outx  = p->outx;
-    outy  = p->outy;
-    outz  = p->outz;
-
-    s     = *p->s;
-    r     = *p->r;
-    b     = *p->b;
-    hstep = *p->hstep;
-    skip  = (int32) *p->skip;
-    x     = p->valx;
-    y     = p->valy;
-    z     = p->valz;
-
-    if (UNLIKELY(offset)) {
-      memset(outx, '\0', offset*sizeof(MYFLT));
-      memset(outy, '\0', offset*sizeof(MYFLT));
-      memset(outz, '\0', offset*sizeof(MYFLT));
-    }
-    if (UNLIKELY(early)) {
-      nsmps -= early;
-      memset(&outx[nsmps], '\0', early*sizeof(MYFLT));
-      memset(&outy[nsmps], '\0', early*sizeof(MYFLT));
-      memset(&outz[nsmps], '\0', early*sizeof(MYFLT));
-    }
-
-    for (n=offset; n<nsmps; n++) {
-      do {
-        xx   =      x+hstep*s*(y-x);
-        yy   =      y+hstep*(-x*z+r*x-y);
-        z    =      z+hstep*(x*y-b*z);
-        x    =      xx;
-        y    =      yy;
-      } while (--skip>0);
-
-      /* Output the results */
-      outx[n] = x;
-      outy[n] = y;
-      outz[n] = z;
-    }
-
-    p->valx = x;
-    p->valy = y;
-    p->valz = z;
-    return OK;
 }
 
 /**************************************************************************/
@@ -1671,30 +1504,26 @@ int mvmfilter(CSOUND *csound, MVMFILT *p) {
 #define S(x)    sizeof(x)
 
 static OENTRY biquad_localops[] = {
-  { "biquad", S(BIQUAD),   0, 3, "a", "akkkkkko",
-                                 (SUBR)biquadset,  (SUBR)biquad },
-  { "biquada", S(BIQUAD),  0, 3, "a", "aaaaaaao",
-                                   (SUBR)biquadset, (SUBR)biquada },
-  { "moogvcf", S(MOOGVCF), 0, 3, "a", "axxpo",
-                                 (SUBR)moogvcfset,  (SUBR)moogvcf },
-  { "moogvcf2", S(MOOGVCF),0, 3, "a", "axxoo",
-                                 (SUBR)moogvcfset,  (SUBR)moogvcf },
-  { "rezzy", S(REZZY),     0, 3, "a", "axxoo", (SUBR)rezzyset,  (SUBR)rezzy },
-  { "bqrez", S(REZZY),     0, 3, "a", "axxoo", (SUBR)bqrezset,  (SUBR)bqrez },
-  { "distort1", S(DISTORT),TR, 2, "a", "akkkko",  NULL,      (SUBR)distort   },
-  { "vco", S(VCO),      TR, 3, "a", "xxiVppovoo",(SUBR)vcoset,  (SUBR)vco },
-  { "tbvcf", S(TBVCF),     0, 3, "a", "axxkkp",
-                                   (SUBR)tbvcfset,  (SUBR)tbvcf   },
-  { "planet", S(PLANET),0, 3,"aaa","kkkiiiiiiioo",
-                                    (SUBR)planetset,  (SUBR)planet},
-  { "pareq", S(PAREQ),     0, 3, "a", "akkkoo",(SUBR)pareqset,  (SUBR)pareq },
-  { "nestedap", S(NESTEDAP),0, 3,"a", "aiiiiooooo",
-                                       (SUBR)nestedapset,  (SUBR)nestedap},
-  { "lorenz", S(LORENZ),0,  3, "aaa", "kkkkiiiio",
-                                    (SUBR)lorenzset,  (SUBR)lorenz},
-  { "mode",  S(MODE),   0, 3,      "a", "axxo", (SUBR)modeset,  (SUBR)mode   },
-  { "mvmfilter", S(MVMFILT), 0, 3, "a", "axxo",
-                                    (SUBR) mvmfilterset, (SUBR) mvmfilter },
+    { "biquad", S(BIQUAD),   0, 3, "a", "akkkkkko",
+                                   (SUBR)biquadset,  (SUBR)biquad },
+    { "biquada", S(BIQUAD),  0, 3, "a", "aaaaaaao",
+                                     (SUBR)biquadset, (SUBR)biquada },
+    { "moogvcf", S(MOOGVCF), 0, 3, "a", "axxpo",
+                                   (SUBR)moogvcfset,  (SUBR)moogvcf },
+    { "moogvcf2", S(MOOGVCF),0, 3, "a", "axxoo",
+                                   (SUBR)moogvcfset,  (SUBR)moogvcf },
+    { "rezzy", S(REZZY),     0, 3, "a", "axxoo", (SUBR)rezzyset,  (SUBR)rezzy },
+    { "bqrez", S(REZZY),     0, 3, "a", "axxoo", (SUBR)bqrezset,  (SUBR)bqrez },
+    { "distort1", S(DISTORT),TR, 2, "a", "akkkko",  NULL,      (SUBR)distort   },
+    { "vco", S(VCO),      TR, 3, "a", "xxiVppovoo",(SUBR)vcoset,  (SUBR)vco },
+    { "tbvcf", S(TBVCF),     0, 3, "a", "axxkkp",
+                                     (SUBR)tbvcfset,  (SUBR)tbvcf   },
+    { "pareq", S(PAREQ),     0, 3, "a", "akkkoo",(SUBR)pareqset,  (SUBR)pareq },
+    { "nestedap", S(NESTEDAP),0, 3,"a", "aiiiiooooo",
+                                         (SUBR)nestedapset,  (SUBR)nestedap},
+    { "mode",  S(MODE),   0, 3,      "a", "axxo", (SUBR)modeset,  (SUBR)mode   },
+    { "mvmfilter", S(MVMFILT), 0, 3, "a", "axxo",
+                                      (SUBR) mvmfilterset, (SUBR) mvmfilter },
 };
 
 LINKAGE_BUILTIN(biquad_localops)

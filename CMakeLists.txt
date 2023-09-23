@@ -769,7 +769,9 @@ set(libcsound_SRCS
     Opcodes/emugens/scugens.c
     Opcodes/reverbsc.c
     Opcodes/streson.c
-    Opcodes/oscbnk.c
+    Opcodes/vco2.c
+    Opcodes/noise.c
+    Opcodes/tl/sc_noise.c
     Opcodes/seqtime.c
     Opcodes/metro.c
     Opcodes/ugsc.c
@@ -807,7 +809,6 @@ endif()
 if(INIT_STATIC_MODULES)
     set(static_modules_SRCS
         Top/init_static_modules.c
-        Opcodes/ampmidid.cpp
         Opcodes/doppler.cpp
         Opcodes/tl/fractalnoise.cpp
         Opcodes/mixer.cpp

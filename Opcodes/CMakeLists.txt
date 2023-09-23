@@ -24,7 +24,6 @@ make_plugin(doppler doppler.cpp)
 make_plugin(fractalnoise tl/fractalnoise.cpp)
 make_plugin(mixer mixer.cpp)
 make_plugin(signalflowgraph signalflowgraph.cpp)
-make_plugin(ampmidid ampmidid.cpp)
 
 if(APPLE)
    make_plugin(arrayops arrayops.cpp)
@@ -50,11 +49,6 @@ else()
       endif()
 endif()
 
-## platform-dependent opcodes ##
-if(UNIX)
-    #make_plugin(control control.c)
-    make_plugin(urandom urandom.c)
-endif()
 
 ## OPCODES WITH EXTERNAL DEPENDENCIES ##
 find_package(LIBLO)

@@ -1167,7 +1167,9 @@ extern int32_t scugens_localops_init(CSOUND *, void *);
 extern int32_t emugens_localops_init(CSOUND *, void *);
 extern int32_t reverbsc_localops_init(CSOUND *, void *);
 extern int32_t streson_localops_init(CSOUND *, void *);
-extern int32_t oscbnk_localops_init(CSOUND *, void *);
+extern int32_t vco2_localops_init(CSOUND *, void *);
+extern int32_t noise_localops_init(CSOUND *, void *);
+extern int32_t scnoise_localops_init(CSOUND *, void *);
 extern int32_t seqtime_localops_init(CSOUND *, void *);
 extern int32_t metro_localops_init(CSOUND *, void *);
 extern int32_t ugsc_localops_init(CSOUND *, void *);
@@ -1184,13 +1186,16 @@ const INITFN staticmodules[] = {
     eqfil_localops_init,
     fout_localops_init,
     ftgen_localops_init,
+    logic_localops_init,
     midiops2_localops_init,
     pinker_localops_init,
     scugens_localops_init,
     emugens_localops_init,
     reverbsc_localops_init,
     streson_localops_init,
-    oscbnk_localops_init,
+    vco2_localops_init,
+    noise_localops_init,
+    scnoise_localops_init,
     seqtime_localops_init,
     metro_localops_init,
     ugsc_localops_init,
@@ -1211,12 +1216,6 @@ const INITFN staticmodules[] = {
 */
 typedef NGFENS* (*FGINITFN)(CSOUND *);
 
-/*
-NGFENS *ftest_fgens_init(CSOUND *);
-NGFENS *farey_fgens_init(CSOUND *);
-*/
-
-// const FGINITFN fgentab[] = {  ftest_fgens_init, farey_fgens_init, NULL };
 const FGINITFN fgentab[] = { NULL };
 
 CS_NOINLINE int csoundInitStaticModules(CSOUND *csound)
@@ -1235,13 +1234,6 @@ CS_NOINLINE int csoundInitStaticModules(CSOUND *csound)
           return CSOUND_ERROR;
       }
     }
-    /*
-    if (UNLIKELY(stdopc_ModuleInit(csound))) return CSOUND_ERROR;
-    if (UNLIKELY(pvsopc_ModuleInit(csound))) return CSOUND_ERROR;
-    sfont_ModuleCreate(csound);
-    if (UNLIKELY(sfont_ModuleInit(csound))) return CSOUND_ERROR;
-    if (UNLIKELY(newgabopc_ModuleInit(csound))) return CSOUND_ERROR;
-    */
     /* modules were initialised successfully */
     /* Now fgens */
     for (i = 0; fgentab[i]!=NULL; i++) {

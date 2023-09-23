@@ -74,14 +74,6 @@ typedef struct {
 } VCO;
 
 typedef struct {
-    OPDS    h;
-    MYFLT   *outx, *outy, *outz, *mass1, *mass2, *sep, *xval, *yval, *zval;
-    MYFLT   *vxval, *vyval, *vzval, *delta, *fric, *iskip;
-    MYFLT   s1z, s2z, friction;
-    MYFLT   x, y, z, vx, vy, vz, ax, ay, az, hstep;
-} PLANET;
-
-typedef struct {
     OPDS   h;
     MYFLT  *out, *in, *fc, *v, *q, *mode, *iskip;
     double xnm1, xnm2, ynm1, ynm2;
@@ -100,13 +92,6 @@ typedef struct {
     int32   npts;
     AUXCH   auxch;
 } NESTEDAP;
-
-typedef struct {
-    OPDS    h;
-    MYFLT   *outx, *outy, *outz,
-            *s, *r, *b, *hstep, *inx, *iny, *inz, *skip, *iskip;
-    MYFLT   valx, valy, valz;
-} LORENZ;
 
 /* And also opcodes of  Jens Groh, Munich, Germany.   mail: groh@irt.de */
 

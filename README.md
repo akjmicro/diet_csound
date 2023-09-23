@@ -1,5 +1,5 @@
 # DIET CSOUND
-Version 7.0.0 (beta)
+Version 6.18
 
 A sound and music computing system.
 

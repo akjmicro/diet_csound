@@ -165,8 +165,6 @@ Raspberry Pi Standard Distro <a name="raspian">
 
 ### (Raspian Wheezy)
 
-
-
 Preliminary step:
 
 `sudo apt-get build-dep csound `
@@ -250,6 +248,7 @@ or there might be a compiler issue, in which case, you need to change the line a
 rpi 2 and 3, though.**
 
 3. Remember to run cmake again (step 6 above) after any changes to Custom.cmake
+
 
 Fedora 18 <a name="fedora">
 ---------
@@ -452,11 +451,11 @@ Once Homebrew is setup, run the following command at the commandline to install 
 `brew install csound`
 
 You can install the latest from the develop branch using:
-  
+
 `brew install --HEAD csound`
 
 If you have a HEAD version already installed and you want to rebuild with newly updated code in the develop branch, use: 
-  
+
 `brew reinstall csound`
 
 ### Building Csound using Homebrew-supplied dependencies

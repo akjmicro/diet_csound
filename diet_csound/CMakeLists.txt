@@ -6,28 +6,6 @@ set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 11)
 
-
-option(USE_VCPKG "Use VCPKG to download and manage dependencies" OFF)
-
-if (USE_VCPKG)
-    # Detect correct triplet based on CMake env
-    if (WIN32)
-        set(VCPKG_TARGET_TRIPLET "x64-windows-csound")
-    elseif(APPLE)
-        set(VCPKG_TARGET_TRIPLET "x64-osx")
-    elseif (UNIX)
-        set(VCPKG_TARGET_TRIPLET "x64-linux")
-    endif()
-
-    set(VCPKG_FEATURE_FLAGS versions)
-    set(X_VCPKG_APPLOCAL_DEPS_INSTALL ON)
-    set(VCPKG_OVERLAY_TRIPLETS ${CMAKE_CURRENT_SOURCE_DIR}/platform/vcpkg/triplets)
-    set(VCPKG_OVERLAY_PORTS ${CMAKE_CURRENT_SOURCE_DIR}/platform/vcpkg/ports)
-    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
-        CACHE STRING "Vcpkg toolchain file")
-endif()
-
-message(STATUS "VCPKG_TARGET_TRIPLET: ${VCPKG_TARGET_TRIPLET}")
 message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
 
 project(Csound)

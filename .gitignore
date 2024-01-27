@@ -137,7 +137,7 @@ po/old_*
 examples/java/CSDPlayer.jar
 examples/java/CsoundEditor.jar
 
-## Build scripts
+## Build scripts (and directories
 build
 buildD
 

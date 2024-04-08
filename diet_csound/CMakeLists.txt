@@ -1213,7 +1213,6 @@ endif()
 
 add_subdirectory(Opcodes)
 add_subdirectory(InOut)
-add_subdirectory(Frontends)
 add_subdirectory(po)
 
 # uninstall target

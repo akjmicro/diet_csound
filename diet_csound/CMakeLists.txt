@@ -1210,9 +1210,9 @@ if(BUILD_STATIC_LIBRARY)
         ARCHIVE DESTINATION "${LIBRARY_INSTALL_DIR}")
 endif()
 
-
 add_subdirectory(Opcodes)
 add_subdirectory(InOut)
+add_subdirectory(Frontends)
 add_subdirectory(po)
 
 # uninstall target

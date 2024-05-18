@@ -1159,6 +1159,7 @@ extern int32_t compress_localops_init(CSOUND *, void *);
 extern int32_t dcblock_localops_init(CSOUND *, void *);
 extern int32_t emugens_localops_init(CSOUND *, void *);
 extern int32_t eqfil_localops_init(CSOUND *, void *);
+extern int32_t faustwguide_localops_init(CSOUND *, void *);
 extern int32_t fout_localops_init(CSOUND *, void *);
 extern int32_t ftgen_localops_init(CSOUND *, void *);
 extern int32_t logic_localops_init(CSOUND *, void *);
@@ -1185,6 +1186,7 @@ const INITFN staticmodules[] = {
     dcblock_localops_init,
     emugens_localops_init,
     eqfil_localops_init,
+    faustwguide_localops_init,
     fout_localops_init,
     ftgen_localops_init,
     logic_localops_init,

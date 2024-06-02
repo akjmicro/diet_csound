@@ -746,6 +746,7 @@ set(libcsound_SRCS
     Opcodes/metro.c
     Opcodes/midiops2.c
     Opcodes/noise.c
+    Opcodes/pan2.c
     Opcodes/pinker.c
     Opcodes/reverbsc.c
     Opcodes/seqtime.c

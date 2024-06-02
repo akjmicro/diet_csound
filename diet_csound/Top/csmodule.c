@@ -1166,6 +1166,7 @@ extern int32_t logic_localops_init(CSOUND *, void *);
 extern int32_t metro_localops_init(CSOUND *, void *);
 extern int32_t midiops2_localops_init(CSOUND *, void *);
 extern int32_t noise_localops_init(CSOUND *, void *);
+extern int32_t pan2_localops_init(CSOUND *, void *);
 extern int32_t pinker_localops_init(CSOUND *, void *);
 extern int32_t reverbsc_localops_init(CSOUND *, void *);
 extern int32_t scnoise_localops_init(CSOUND *, void *);
@@ -1193,6 +1194,7 @@ const INITFN staticmodules[] = {
     metro_localops_init,
     midiops2_localops_init,
     noise_localops_init,
+    pan2_localops_init,
     pinker_localops_init,
     reverbsc_localops_init,
     scnoise_localops_init,
